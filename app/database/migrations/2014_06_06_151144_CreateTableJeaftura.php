@@ -15,7 +15,7 @@ class CreateTableJeaftura extends Migration {
 			$tabla->string('username',80);
 			$tabla->string('password',200);
 			$tabla->string('remember_token');
-			$tabla->integer('id_empleado');
+			$tabla->string('id_empleado',10);
 			$tabla->boolean('active');
 			$tabla->timestamps();
 		});

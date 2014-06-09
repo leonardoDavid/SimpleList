@@ -10,7 +10,7 @@ class JefaturaSeeder extends Seeder {
     		'username' => "admin",
             'password' => Hash::make('test'),
             'remember_token' => "Future Token",
-			'id_empleado' => 1,
+			'id_empleado' => '11111111-1',
             'active' => 1
         ));
     }

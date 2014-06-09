@@ -11,14 +11,12 @@
 |
 */
 
-App::before(function($request)
-{
+App::before(function($request){
 	//
 });
 
 
-App::after(function($request, $response)
-{
+App::after(function($request, $response){
 	//
 });
 
@@ -33,24 +31,19 @@ App::after(function($request, $response)
 |
 */
 
-Route::filter('auth', function()
-{
-	if (Auth::guest())
-	{
-		if (Request::ajax())
-		{
+Route::filter('auth', function(){
+	if (Auth::guest()){
+		if (Request::ajax()){
 			return Response::make('Unauthorized', 401);
 		}
-		else
-		{
+		else{
 			return Redirect::guest('login');
 		}
 	}
 });
 
 
-Route::filter('auth.basic', function()
-{
+Route::filter('auth.basic', function(){
 	return Auth::basic();
 });
 
@@ -65,8 +58,7 @@ Route::filter('auth.basic', function()
 |
 */
 
-Route::filter('guest', function()
-{
+Route::filter('guest', function(){
 	if (Auth::check()) return Redirect::to('/');
 });
 
@@ -81,10 +73,59 @@ Route::filter('guest', function()
 |
 */
 
-Route::filter('csrf', function()
-{
-	if (Session::token() != Input::get('_token'))
-	{
-		throw new Illuminate\Session\TokenMismatchException;
+Route::filter('csrf', function(){
+   	$token = Request::ajax() ? Request::header('X-CSRF-Token') : Input::get('_token');
+   	if (Session::token() != $token) {
+      	if(Request::ajax()){
+      		return array(
+      			'status' => false,
+      			'motivo' => "Error del Token",
+      			'codigo' => 504
+      		);
+      	}
+      	else{
+      		return Redirect::to('/login')->with('error_login', 'Sesión Expirada');
+      	}
+   	}
+});
+
+/*
+|--------------------------------------------------------------------------
+| Filtro de Acceso a Rutas
+|--------------------------------------------------------------------------
+|
+| Este filtro permite determinar si un usuario logeado tiene acceso parcial
+| a la url que esta solicitando, se verifica si tiene permisos de acceso 
+| a traves de los valores asignados de la tabla menu
+|
+*/
+Route::filter('access',function($route,$request,$url = '/'){
+	if(Auth::guest()){
+		return Redirect::to('/login');
+	}
+	else{
+		$tmp = MainMenu::where('url','=',$url)->get()->take(1)->toArray();
+		if($tmp[0]['id'] >= 0){
+			$permiss = Permisos::where('menu_id','=',$tmp[0]['id'])
+								->where('user_id','=',Auth::user()->id)
+								->where('type','=','1')
+								->get()->toArray();
+			if(count($permiss) == 0){
+				return Redirect::to('/perfil')->with('error_url', 'No tienes acceso a '.$tmp[0]['name']);
+			}
+		}
+		else{
+			$tmp = SubMainMenu::where('url','=',$url)->get()->take(1)->toArray();
+			if($tmp[0]['id'] >= 0){
+				$permiss = Permisos::where('menu_id','=',$tmp[0]['id'])
+									->where('user_id','=',Auth::user()->id)
+									->where('type','=','2')
+									->get()->toArray();
+				if(count($permiss) == 0){
+					return Redirect::to('/perfil')->with('error_url', 'No tienes acceso a '.$tmp[0]['name']);
+				}
+			}
+			return Redirect::to('/perfil')->with('error_url', 'No tienes acceso a '.$tmp[0]['name']);
+		}
 	}
 });
