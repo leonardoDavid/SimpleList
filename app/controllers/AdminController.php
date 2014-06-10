@@ -23,4 +23,76 @@ class AdminController extends BaseController {
         ));
     }
 
+    public function addEmployed(){
+        if(Request::ajax()){
+            $validation = Validator::make(
+                array(
+                    'name' => Input::get('name'),
+                    'ape_paterno' => Input::get('ape_paterno'),
+                    'ape_materno' => Input::get('ape_materno'),
+                    'direction' => Input::get('direction'),
+                    'phone' => Input::get('phone'),
+                    'movil' => Input::get('movil'),
+                    'prevision' => Input::get('prevision'),
+                    'cargo' => Input::get('cargo'),
+                    'centro' => Input::get('centro')
+                ),
+                array(
+                    'name' => 'required',
+                    'ape_paterno' => 'required',
+                    'ape_materno' => 'required',
+                    'direction' => 'required',
+                    'phone' => 'numeric',
+                    'movil' => 'required|numeric|min:8',
+                    'prevision' => 'required',
+                    'cargo' => 'required',
+                    'centro' => 'required'
+                )
+            );
+
+            if($validation->fails()){
+                $messages = $validation->messages();
+                foreach ($messages as $error){
+                    break;
+                }
+                $response = array(
+                    'status' => false,
+                    'motivo' => "Campos ingresados malos"
+                );
+            }
+            else{
+                $empleado = new Empleado;
+                $empleado->nombre = Input::get('name');
+                $empleado->ape_paterno = Input::get('ape_paterno');
+                $empleado->ape_materno = Input::get('ape_materno',null);
+                $empleado->direccion = Input::get('direction');
+                $empleado->fono_fijo = Input::get('phone',null);
+                $empleado->fono_movil = Input::get('movil');
+                $empleado->prevision = Input::get('prevision');
+                $empleado->cargo = Input::get('cargo');
+                $empleado->centro_costo = Input::get('centro');
+
+                try {
+                    $empleado->save();
+                    $response = array(
+                        'status' => true
+                    );
+                }catch (Exception $e) {
+                    $response = array(
+                        'status' => false,
+                        'motivo' => "Error al tratar de guardar",
+                        'execption' => $e->getMessage()
+                    );   
+                }
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
 }

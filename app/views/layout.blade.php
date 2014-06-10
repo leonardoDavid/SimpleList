@@ -8,6 +8,7 @@
         <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
         <link href="/css/ionicons.min.css" rel="stylesheet" type="text/css" />
         <link href="/css/AdminLTE.css" rel="stylesheet" type="text/css" />
+        <link href="/css/theme.css" rel="stylesheet" type="text/css" />
         @yield('styles')
 
         <!--[if lt IE 9]>

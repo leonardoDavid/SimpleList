@@ -1,0 +1,9 @@
+.afterAdd{
+	position: absolute;
+	z-index: 1020;
+	text-align: center;
+	margin-top: 5%;
+	height: 100%;
+	width: 100%;
+	display: none;
+}
