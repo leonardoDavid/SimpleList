@@ -28,6 +28,7 @@ Route::group(array('before' => 'auth'), function(){
 		return Redirect::to('/admin/empleados');
 	});
 	Route::post('/admin/empleados/add','AdminController@addEmployed');
+	Route::post('/admin/centros/add','AdminController@addCenter');
 
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');
