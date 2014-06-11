@@ -64,6 +64,7 @@
         <!-- Scripts -->
         <script src="/js/jquery.js"></script>
         <script>
+            var log;
             $(document).on('ready',function(){
                 @yield('scriptsInLine')
             });

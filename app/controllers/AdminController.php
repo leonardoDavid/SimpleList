@@ -19,17 +19,24 @@ class AdminController extends BaseController {
             'description' => "Empleados",
             'route' => Util::getTracert(),
             'user' => Util::getUserNotification($user),
-            'menu' => Util::getMenu($user['name'],$user['img'])
+            'menu' => Util::getMenu($user['name'],$user['img']),
+            'cargos' => Util::getSelectCargos(),
+            'centers' => Util::getSelectCenters()
         ));
     }
 
     public function addEmployed(){
         if(Request::ajax()){
+
+            $rutEmployed = substr(Input::get('rut'), 0,count(Input::get('rut'))-2);
+            $rutEmployed .= "-";
+            $rutEmployed .= substr(Input::get('rut'), -1);
+
             $validation = Validator::make(
                 array(
+                    'rut' => $rutEmployed,
                     'name' => Input::get('name'),
                     'ape_paterno' => Input::get('ape_paterno'),
-                    'ape_materno' => Input::get('ape_materno'),
                     'direction' => Input::get('direction'),
                     'phone' => Input::get('phone'),
                     'movil' => Input::get('movil'),
@@ -38,30 +45,35 @@ class AdminController extends BaseController {
                     'centro' => Input::get('centro')
                 ),
                 array(
+                    'rut' => 'required|unique:empleado,id',
                     'name' => 'required',
                     'ape_paterno' => 'required',
-                    'ape_materno' => 'required',
                     'direction' => 'required',
                     'phone' => 'numeric',
-                    'movil' => 'required|numeric|min:8',
+                    'movil' => 'required|numeric',
                     'prevision' => 'required',
-                    'cargo' => 'required',
-                    'centro' => 'required'
+                    'cargo' => 'required|numeric',
+                    'centro' => 'required|numeric'
                 )
             );
 
             if($validation->fails()){
-                $messages = $validation->messages();
-                foreach ($messages as $error){
-                    break;
+                $errores = $validation->messages()->all();
+                $mensajes = "<ul class='text-red'>";
+                foreach ($errores as $row){
+                    $mensajes .= "<li>".$row."</li>";
                 }
+                $mensajes .= "</ul>";
                 $response = array(
                     'status' => false,
-                    'motivo' => "Campos ingresados malos"
+                    'motivo' => "Hay campos que no son correctos",
+                    'errores' => $mensajes,
+                    'detalle' => "<strong>Woou! </strong> No se ha podido ingresar el registro ya que hay campos invalidos:"
                 );
             }
             else{
                 $empleado = new Empleado;
+                $empleado->id = $rutEmployed;
                 $empleado->nombre = Input::get('name');
                 $empleado->ape_paterno = Input::get('ape_paterno');
                 $empleado->ape_materno = Input::get('ape_materno',null);
@@ -71,7 +83,7 @@ class AdminController extends BaseController {
                 $empleado->prevision = Input::get('prevision');
                 $empleado->cargo = Input::get('cargo');
                 $empleado->centro_costo = Input::get('centro');
-
+                $empleado->active = 1;
                 try {
                     $empleado->save();
                     $response = array(

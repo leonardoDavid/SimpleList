@@ -45,9 +45,19 @@
                 <div class="box-body">
 					{{ Form::open(array('url' => '/admin/empleados/add' , 'id' => 'addEmployedForm')) }}
 						<meta name="csrf-token" content="{{ csrf_token() }}">
-						<div class="input-group">
-                            <span class="input-group-addon"><span class="fa fa-user"></span></span>
-                            <input type="text" class="form-control" data-requiered="1" id="name" placeholder="Nombre">
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-barcode"></span></span>
+                                    <input type="text" class="form-control" data-requiered="1" id="rut" placeholder="RUT">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-user"></span></span>
+                                    <input type="text" class="form-control" data-requiered="1" id="name" placeholder="Nombre">
+                                </div>
+                            </div>
                         </div>
                         <div class="row">
                         	<div class="col-xs-12 col-md-6">
@@ -75,13 +85,13 @@
                         	<div class="col-xs-12 col-md-6">
 	                        	<div class="input-group">
 	                            	<span class="input-group-addon"><span class="fa fa-phone"></span></span>
-                            		<input type="text" class="form-control" id="phone" placeholder="Télefono Fijo">
+                            		<input type="text" class="form-control" id="phone" placeholder="Teléfono Fijo">
                         		</div>
                         	</div>
                         	<div class="col-xs-12 col-md-6">
 	                        	<div class="input-group">
 	                            	<span class="input-group-addon"><span class="fa fa-mobile-phone"></span></span>
-                            		<input type="text" class="form-control" data-requiered="1" id="movil" placeholder="Téñefono Móvil">
+                            		<input type="text" class="form-control" data-requiered="1" id="movil" placeholder="Teléfono Móvil">
                         		</div>
                         	</div>
                         </div>
@@ -89,13 +99,17 @@
                         	<div class="col-xs-12 col-md-6">
 	                        	<div class="input-group">
 	                            	<span class="input-group-addon"><span class="fa fa-certificate"></span></span>
-                            		<input type="text" class="form-control" data-requiered="1" id="cargo" placeholder="Cargo">
+                                    <select id="cargo" class="form-control" data-requiered="1">
+                                        {{ $cargos }}
+                                    </select>
                         		</div>
                         	</div>
                         	<div class="col-xs-12 col-md-6">
 	                        	<div class="input-group">
 	                            	<span class="input-group-addon"><span class="fa fa-archive"></span></span>
-                            		<input type="text" class="form-control" data-requiered="1" id="centro" placeholder="Centro de Costos">
+                                    <select id="centro" class="form-control" data-requiered="1">
+                                        {{ $centers }}
+                                    </select>
                         		</div>
                         	</div>
                         </div>
@@ -121,6 +135,24 @@
             </div>
         </div>
 	</div>
+
+    <div class="modal fade" id="error-server" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">SimpleList</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="msj-error"></p>
+                    <p id="list-error"></p>                       
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scriptsInLine')
@@ -152,6 +184,7 @@
     			url: '/admin/empleados/add',
     			type: 'post',
     			data: { 
+                    rut : $('#rut').val(),
     				name : $('#name').val(),
     				ape_paterno : $('#ape_paterno').val(),
     				ape_materno : $('#ape_materno').val(),
@@ -168,6 +201,9 @@
     				}
     				else{
     					$('#error-add').text(response['motivo']).fadeIn();
+                        $('#msj-error').html(response['detalle']);
+                        $('#list-error').html(response['errores']);
+                        $('#error-server').modal();
     					$('#over-add').fadeOut();
     					$('#addEmployed span').text("Agregar");
     					setTimeout(function() {
@@ -188,14 +224,14 @@
     	}
     });
 
-    $('input[type="text"]').focus(function(event){
+    $('input[type="text"],select[data-requiered="1"]').focus(function(event){
     	$(this).parent().removeClass('has-error');
     });
 
     function validate(){
     	var hasError = true;
-    	$('.input-group input[data-requiered="1"]').each(function(index, el){
-    		if($(this).val() == ""){
+    	$('.input-group *[data-requiered="1"]').each(function(index, el){
+    		if($(this).val() == "" || $(this).val() == "0"){
     			$(this).parent().addClass('has-error');
     			hasError = false;
     		}
@@ -213,6 +249,7 @@
     }
 
     function clearFormAdd(){
+        $('#rut').val("");
     	$('#name').val("");
     	$('#ape_paterno').val("");
     	$('#ape_materno').val("");
@@ -220,8 +257,9 @@
     	$('#phone').val("");
     	$('#movil').val("");
     	$('#prevision').val("");
-    	$('#cargo').val("");
-    	$('#centro').val("");
+    	$('#cargo').val(0);
+    	$('#centro').val(0);
+        $('#addEmployed span').text("Agregar");
     }
 
     $('#phone,#movil').keypress(function(event){
@@ -229,5 +267,20 @@
           	event.preventDefault();
       	}
   	});
+
+    $('#rut').keypress(function(event){
+        var pass = true;
+        if($('#rut').val().length == 9 || ($('#rut').val().slice(-1) == "k" || $('#rut').val().slice(-1) == "K"))
+            pass = false;
+        else if( (event.which == 107 || event.which == 75) ){
+            if(!($('#rut').val().length >=7))
+                pass = false;
+        }
+        else if(event.which != 8 && isNaN(String.fromCharCode(event.which)))
+            pass = false;
+
+        if(!pass)
+            event.preventDefault();
+    });
 
 @stop

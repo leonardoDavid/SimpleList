@@ -87,4 +87,22 @@ class Util{
         ));
     }
 
+    public static function getSelectCargos(){
+        $options = "<option value='0'>Seleccione un Cargo</option>";
+        $cargos = Cargo::where('active','=','1')->get();
+        foreach ($cargos as $row){
+            $options .= "<option value='".$row->id."'>".$row->nombre."</option>";
+        }
+        return $options;
+    }
+
+    public static function getSelectCenters(){
+        $options = "<option value='0'>Seleccione un Centro</option>";
+        $centers = CentroCosto::where('active','=','1')->get();
+        foreach ($centers as $row){
+            $options .= "<option value='".$row->id."'>".$row->nombre."</option>";
+        }
+        return $options;
+    }
+
 }
