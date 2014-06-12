@@ -66,6 +66,7 @@
         <script>
             var log;
             $(document).on('ready',function(){
+                $('.dropdown-toggle').dropdown();
                 @yield('scriptsInLine')
             });
         </script>

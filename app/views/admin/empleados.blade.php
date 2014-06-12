@@ -4,6 +4,11 @@
 	SimpleList | Administración
 @stop
 
+@section('styles')
+    <link href="/css/plugins/dataTables.bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <link href="/css/iCheck/flat/orange.css" rel="stylesheet" type="text/css" />
+@stop
+
 @section('header')
 	<h1>
 	    {{ $titlePage }}
@@ -42,8 +47,8 @@
                     <i class="fa fa-plus"></i>
                     <h3 class="box-title">Agregar Empleado</h3>
                 </div>
+                {{ Form::open(array('url' => '/admin/empleados/add' , 'id' => 'addEmployedForm')) }}
                 <div class="box-body">
-					{{ Form::open(array('url' => '/admin/empleados/add' , 'id' => 'addEmployedForm')) }}
 						<meta name="csrf-token" content="{{ csrf_token() }}">
                         <div class="row">
                             <div class="col-xs-12 col-md-6">
@@ -113,12 +118,13 @@
                         		</div>
                         	</div>
                         </div>
-                        <div class="box-footer clearfix">
-                        	<p class="text-red pull-left" id="error-add"></p>
-                            <button class="pull-right btn btn-default" id="addEmployed"><span>Agregar</span> <i class="fa fa-arrow-circle-right"></i></button>
-                        </div>
-					{{ Form::close() }}
+					
                 </div>
+                <div class="box-footer clearfix">
+                    <p class="text-red pull-left" id="error-add"></p>
+                    <button class="pull-right btn btn-default" id="addEmployed"><span>Agregar</span> <i class="fa fa-arrow-circle-right"></i></button>
+                </div>
+                {{ Form::close() }}
             </div>
         </div>
 
@@ -126,11 +132,36 @@
 	    <div class="col-xs-12 col-md-6">
             <div class="box box-info">
                 <div class="box-header">
+                    <div class="pull-right box-tools">
+                        <button class="btn btn-info btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
+                        <button class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
+                    </div>
                     <i class="fa fa-filter"></i>
                     <h3 class="box-title">Gestionar Empleados</h3>
                 </div>
-                <div class="box-body">
-					This is a content
+                <div class="box-body table-responsive">
+                    <table id="employes" class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>RUT</th>
+                                <th>Nombre</th>
+                                <th>Apellidos</th>
+                                <th>Estado</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {{ $empleadosListTable }}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="box-footer clearfix">
+                    <p class="pull-left">A los marcados</p>
+                    <div class="pull-right">
+                        <button class="btn btn-default" id="addEmployed"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-default" id="addEmployed"><span>Activar</span> <i class="fa fa-check"></i></button>
+                        <button class="btn btn-default" id="addEmployed"><span>Desactivar</span> <i class="fa fa-times"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -163,6 +194,34 @@
             }
         });
         $('*[data-autohide="1"]').hide();
+        $("#employes").DataTable({
+            "oLanguage": {
+                "sEmptyTable": "Sin Datos",
+                "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "sLoadingRecords": "Cargando...",
+                "sProcessing": "Procesando...",
+                "sSearch": "Buscar:",
+                "sSearchPlaceholder": "Search...",
+                "sZeroRecords": "No se encontraron coincidencias",
+                "oPaginate": {
+                    "sFirst": "Primera",
+                    "sLast": "Última",
+                    "sNext": "",
+                    "sPrevious": "",
+                },
+                "sLengthMenu": 'Mostrar <select class="form-control">'+
+                    '<option value="5">5</option>'+
+                    '<option value="10">10</option>'+
+                    '<option value="20">20</option>'+
+                    '<option value="-1">Todos</option>'+
+                    '</select>'+' regsitros'
+            }
+        });
+        $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
+            checkboxClass: 'icheckbox_flat-orange',
+            radioClass: 'iradio_flat-orange'
+        });
     });
 
     $('#addMoreEmployed').click(function(event){
@@ -283,4 +342,9 @@
             event.preventDefault();
     });
 
+@stop
+
+@section('scripts')
+    <script src="/js/plugins/datatables/jquery.dataTables.js"></script>
+    <script src="/js/plugins/datatables/dataTables.bootstrap.js"></script>
 @stop

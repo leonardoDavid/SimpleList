@@ -105,4 +105,33 @@ class Util{
         return $options;
     }
 
+    public static function getEmpleoyesTable(){
+        $employes = Empleado::where('id','!=',Auth::user()->id_empleado)->get();
+        $response = "";
+        foreach ($employes as $row){
+            $response .= View::make('admin.empleadoTabla',array(
+                'rut' => $row->id,
+                'firstname' => ucwords($row->nombre),
+                'lastname' => ucwords($row->ape_paterno)." ".ucwords($row->ape_materno),
+                'status' => $row->active,
+                'value' => $row->id
+            ));
+        }
+        return $response;
+    }
+
+    public static function getCentersTable(){
+        $centers = CentroCosto::all();
+        $response = "";
+        foreach ($centers as $row){
+            $response .= View::make('admin.centrosTabla',array(
+                'name' => ucwords($row->nombre),
+                'status' => $row->active,
+                'dateAdd' => $row->created_at,
+                'value' => Crypt::encrypt($row->id)
+            ));
+        }
+        return $response;
+    }
+
 }

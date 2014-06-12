@@ -21,7 +21,8 @@ class AdminController extends BaseController {
             'user' => Util::getUserNotification($user),
             'menu' => Util::getMenu($user['name'],$user['img']),
             'cargos' => Util::getSelectCargos(),
-            'centers' => Util::getSelectCenters()
+            'centers' => Util::getSelectCenters(),
+            'empleadosListTable' => Util::getEmpleoyesTable()
         ));
     }
 
@@ -33,7 +34,8 @@ class AdminController extends BaseController {
             'description' => "Centro de Costos",
             'route' => Util::getTracert(),
             'user' => Util::getUserNotification($user),
-            'menu' => Util::getMenu($user['name'],$user['img'])
+            'menu' => Util::getMenu($user['name'],$user['img']),
+            'centersListTable' => Util::getCentersTable()
         ));
     }
 

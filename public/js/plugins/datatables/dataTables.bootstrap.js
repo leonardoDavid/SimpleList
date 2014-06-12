@@ -5,7 +5,7 @@ $.extend( true, $.fn.dataTable.defaults, {
 		"t"+
 		"<'row'<'col-xs-6'i><'col-xs-6'p>>",
 	"oLanguage": {
-		"sLengthMenu": "_MENU_ records per page"
+		"sLengthMenu": "_MENU_ registros por página"
 	}
 } );
 
@@ -157,7 +157,7 @@ else {
 			},
 
 			"fnUpdate": function ( oSettings, fnDraw ) {
-				var iListLength = 5;
+				var iListLength = 4;
 				var oPaging = oSettings.oInstance.fnPagingInfo();
 				var an = oSettings.aanFeatures.p;
 				var i, ien, j, sClass, iStart, iEnd, iHalf=Math.floor(iListLength/2);
