@@ -1,5 +1,7 @@
 <?php
 
+use SimpleList\Entities\Jefatura;
+
 /**
 * Se crea una jefatura, que es quien tendra login
 */

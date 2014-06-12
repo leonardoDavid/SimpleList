@@ -1,5 +1,7 @@
 <?php
 
+use SimpleList\Entities\MainMenu;
+
 /**
 * Agregamos los menus que tambien sirven como acciones/permisos
 */

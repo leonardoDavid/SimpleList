@@ -1,7 +1,11 @@
 <?php
 
-class SiteController extends BaseController {
+use SimpleList\Repositories\JefaturaRepo;
+use SimpleList\Repositories\CentroRepo;
+use SimpleList\Repositories\EmpleadoRepo;
+use SimpleList\Repositories\AdelantoRepo;
 
+class SiteController extends BaseController{
 	/*
 	|--------------------------------------------------------------------------
 	| Funciones Router
@@ -12,15 +16,15 @@ class SiteController extends BaseController {
 	|
 	*/
 	public function getDashboard(){
-		$user = Util::getUserData(Auth::user()->id);
+		$user = JefaturaRepo::getUserData(Auth::user()->id);
 		$fastInfo = $this->_getFastInfo();
 
 		return View::make('pages.dashboard',array(
 			'titlePage' => "Dashboard",
 			'description' => "Centro de Control",
 			'route' => Util::getTracert(),
-			'user' => Util::getUserNotification($user),
 			'menu' => Util::getMenu($user['name'],$user['img']),
+			'user' => JefaturaRepo::getUserNotification($user),
 			'pays' => $fastInfo['pays'],
 			'porcent' => $fastInfo['porcent'],
 			'employed' => $fastInfo['employed'],
@@ -30,11 +34,9 @@ class SiteController extends BaseController {
 	}
 
 	private function _getFastInfo(){
-
-		$centers = CentroCosto::where('active','=','1')->count();
-		$employes = Empleado::where('active','=','1')->count();
-		$pays = Adelanto::where('active','=','1')->sum('monto');
-
+		$centers = CentroRepo::count();
+		$employes = EmpleadoRepo::count();
+		$pays = AdelantoRepo::sum();
 		return array(
 			'pays' => $pays,
 			'porcent' => 1,

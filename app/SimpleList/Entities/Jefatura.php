@@ -1,11 +1,11 @@
-<?php
+<?php namespace SimpleList\Entities;
 
 use Illuminate\Auth\UserTrait;
 use Illuminate\Auth\UserInterface;
 use Illuminate\Auth\Reminders\RemindableTrait;
 use Illuminate\Auth\Reminders\RemindableInterface;
 
-class Jefatura extends Eloquent implements UserInterface, RemindableInterface {
+class Jefatura extends \Eloquent implements UserInterface, RemindableInterface {
 
 	use UserTrait, RemindableTrait;
 
@@ -29,7 +29,7 @@ class Jefatura extends Eloquent implements UserInterface, RemindableInterface {
 	}
 
 	public function menus(){
-        return $this->belongsToMany('MainMenu', 'permisos_menu', 'user_id', 'menu_id')->where('menu.active','=','1')->orderBy('menu.id');
+        return $this->belongsToMany('SimpleList\Entities\MainMenu', 'permisos_menu', 'user_id', 'menu_id')->where('menu.active','=','1')->orderBy('menu.id');
     }
 
 }

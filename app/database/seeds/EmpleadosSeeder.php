@@ -1,5 +1,7 @@
 <?php
 
+use SimpleList\Entities\Empleado;
+
 /**
 * Se crean empleados de pruebas para trabajar
 */

@@ -1,5 +1,7 @@
 <?php
 
+use SimpleList\Entities\CentroCosto;
+
 /**
 * Se crean Centros de Costo de prueba
 */

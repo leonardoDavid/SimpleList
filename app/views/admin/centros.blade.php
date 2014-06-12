@@ -86,7 +86,20 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{ $centersListTable }}
+                            @foreach($centersListTable as $center)
+                                <tr>
+                                    <td>{{ $center->nombre }}</td>
+                                    @if($center->active == 1)
+                                        <td>Activo</td>
+                                    @else
+                                        <td>Deshabilitado</td>
+                                    @endif
+                                    <td>{{ $center->created_at }}</td>
+                                    <td>
+                                        <input type="checkbox" class="flat-orange" name="centerIdOperating" value="{{ $center->value }}">
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>

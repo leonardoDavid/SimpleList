@@ -1,4 +1,7 @@
 <?php
+
+use SimpleList\Entities\SubMainMenu;
+
 class SubMainTableSeeder extends Seeder{
 	public function run(){
         SubMainMenu::create(array(

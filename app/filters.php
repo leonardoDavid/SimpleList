@@ -1,5 +1,9 @@
 <?php
 
+use SimpleList\Repositories\MainMenuRepo;
+use SimpleList\Repositories\SubMenuRepo;
+use SimpleList\Repositories\PermisosRepo;
+
 /*
 |--------------------------------------------------------------------------
 | Application & Route Filters
@@ -104,23 +108,17 @@ Route::filter('access',function($route,$request,$url = '/'){
 		return Redirect::to('/login');
 	}
 	else{
-		$tmp = MainMenu::where('url','=',$url)->get()->take(1)->toArray();
+		$tmp = MainMenuRepo::getUrlInArray($url);
 		if($tmp[0]['id'] >= 0){
-			$permiss = Permisos::where('menu_id','=',$tmp[0]['id'])
-								->where('user_id','=',Auth::user()->id)
-								->where('type','=','1')
-								->get()->toArray();
+			$permiss = PermisosRepo::hasAccessInArray($tmp[0]['id'],1);
 			if(count($permiss) == 0){
 				return Redirect::to('/perfil')->with('error_url', 'No tienes acceso a '.$tmp[0]['name']);
 			}
 		}
 		else{
-			$tmp = SubMainMenu::where('url','=',$url)->get()->take(1)->toArray();
+			$tmp = SubMenuRepo::getUrlInArray($url);
 			if($tmp[0]['id'] >= 0){
-				$permiss = Permisos::where('menu_id','=',$tmp[0]['id'])
-									->where('user_id','=',Auth::user()->id)
-									->where('type','=','2')
-									->get()->toArray();
+				$permiss = PermisosRepo::hasAccessInArray($tmp[0]['id'],2);
 				if(count($permiss) == 0){
 					return Redirect::to('/perfil')->with('error_url', 'No tienes acceso a '.$tmp[0]['name']);
 				}

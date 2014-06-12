@@ -1,5 +1,11 @@
 <?php
 
+use SimpleList\Entities\Jefatura;
+use SimpleList\Entities\CentroCosto;
+use SimpleList\Entities\SubMainMenu;
+use SimpleList\Entities\Cargo;
+use SimpleList\Entities\Empleado;
+
 class Util{
 
 	/*
@@ -12,16 +18,6 @@ class Util{
     | la ruta actual donde se encuentra, entre otros.
     |
     */
-    public static function getUserData($id){
-        $user = Jefatura::getUserData($id)->get();
-        return array(
-            'name' => $user[0]->name,
-            'fullname' => $user[0]->name." ".$user[0]->paterno,
-            'added' => $user[0]->added,
-            'img' => $user[0]->img
-        );
-    }
-
     public static function getMenu($name,$img){
         $response = "";
 
@@ -76,62 +72,6 @@ class Util{
         }
         else
             return '<li><a href="/"><i class="fa fa-dashboard active"></i> Dashboard</a></li>';
-    }
-
-    public static function getUserNotification($userInfo){
-        return View::make('menus.userNotification',array(
-            'username' => $userInfo['name'],
-            'fullname' => $userInfo['fullname'],
-            'added' => $userInfo['added'],
-            'img' => $userInfo['img']
-        ));
-    }
-
-    public static function getSelectCargos(){
-        $options = "<option value='0'>Seleccione un Cargo</option>";
-        $cargos = Cargo::where('active','=','1')->get();
-        foreach ($cargos as $row){
-            $options .= "<option value='".$row->id."'>".$row->nombre."</option>";
-        }
-        return $options;
-    }
-
-    public static function getSelectCenters(){
-        $options = "<option value='0'>Seleccione un Centro</option>";
-        $centers = CentroCosto::where('active','=','1')->get();
-        foreach ($centers as $row){
-            $options .= "<option value='".$row->id."'>".$row->nombre."</option>";
-        }
-        return $options;
-    }
-
-    public static function getEmpleoyesTable(){
-        $employes = Empleado::where('id','!=',Auth::user()->id_empleado)->get();
-        $response = "";
-        foreach ($employes as $row){
-            $response .= View::make('admin.empleadoTabla',array(
-                'rut' => $row->id,
-                'firstname' => ucwords($row->nombre),
-                'lastname' => ucwords($row->ape_paterno)." ".ucwords($row->ape_materno),
-                'status' => $row->active,
-                'value' => $row->id
-            ));
-        }
-        return $response;
-    }
-
-    public static function getCentersTable(){
-        $centers = CentroCosto::all();
-        $response = "";
-        foreach ($centers as $row){
-            $response .= View::make('admin.centrosTabla',array(
-                'name' => ucwords($row->nombre),
-                'status' => $row->active,
-                'dateAdd' => $row->created_at,
-                'value' => Crypt::encrypt($row->id)
-            ));
-        }
-        return $response;
     }
 
 }

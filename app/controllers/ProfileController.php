@@ -1,6 +1,8 @@
 <?php
-class ProfileController extends BaseController {
 
+use SimpleList\Repositories\JefaturaRepo;
+
+class ProfileController extends BaseController {
     /*
     |--------------------------------------------------------------------------
     | Metodos de Perfil
@@ -12,13 +14,13 @@ class ProfileController extends BaseController {
     |
     */
     public function getProfile(){
-        $user = Util::getUserData(Auth::user()->id);
+        $user = JefaturaRepo::getUserData(Auth::user()->id);
 
         return View::make('profile.profile',array(
             'titlePage' => "Mi Perfil",
             'description' => "",
+            'user' => JefaturaRepo::getUserNotification($user),
             'route' => Util::getTracert(),
-            'user' => Util::getUserNotification($user),
             'menu' => Util::getMenu($user['name'],$user['img'])
         ));
     }

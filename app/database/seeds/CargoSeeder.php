@@ -1,5 +1,7 @@
 <?php
 
+use SimpleList\Entities\Cargo;
+
 /**
 * Se crean cargos de prueba
 */

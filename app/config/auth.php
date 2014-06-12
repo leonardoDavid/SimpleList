@@ -28,7 +28,7 @@ return array(
 	|
 	*/
 
-	'model' => 'Jefatura',
+	'model' => 'SimpleList\Entities\Jefatura',
 
 	/*
 	|--------------------------------------------------------------------------

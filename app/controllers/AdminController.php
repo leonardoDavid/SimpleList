@@ -1,6 +1,11 @@
 <?php
-class AdminController extends BaseController {
 
+use SimpleList\Repositories\EmpleadoRepo;
+use SimpleList\Repositories\CentroRepo;
+use SimpleList\Repositories\JefaturaRepo;
+use SimpleList\Repositories\CargoRepo;
+
+class AdminController extends BaseController {
     /*
     |--------------------------------------------------------------------------
     | Metodos de Administracion
@@ -12,30 +17,30 @@ class AdminController extends BaseController {
     |
     */
     public function getEmpleados(){
-        $user = Util::getUserData(Auth::user()->id);
+        $user = JefaturaRepo::getUserData(Auth::user()->id);
 
         return View::make('admin.empleados',array(
             'titlePage' => "Administración",
             'description' => "Empleados",
             'route' => Util::getTracert(),
-            'user' => Util::getUserNotification($user),
             'menu' => Util::getMenu($user['name'],$user['img']),
-            'cargos' => Util::getSelectCargos(),
-            'centers' => Util::getSelectCenters(),
-            'empleadosListTable' => Util::getEmpleoyesTable()
+            'user' => JefaturaRepo::getUserNotification($user),
+            'cargos' => CargoRepo::getSelectCargos(),
+            'centers' => CentroRepo::getSelectCenters(),
+            'empleadosListTable' => EmpleadoRepo::getEmpleoyesWithoutMe()
         ));
     }
 
     public function getCentros(){
-        $user = Util::getUserData(Auth::user()->id);
+        $user = JefaturaRepo::getUserData(Auth::user()->id);
 
         return View::make('admin.centros',array(
             'titlePage' => "Administración",
             'description' => "Centro de Costos",
             'route' => Util::getTracert(),
-            'user' => Util::getUserNotification($user),
             'menu' => Util::getMenu($user['name'],$user['img']),
-            'centersListTable' => Util::getCentersTable()
+            'user' => JefaturaRepo::getUserNotification($user),
+            'centersListTable' => CentroRepo::all()
         ));
     }
 

@@ -118,7 +118,6 @@
                         		</div>
                         	</div>
                         </div>
-					
                 </div>
                 <div class="box-footer clearfix">
                     <p class="text-red pull-left" id="error-add"></p>
@@ -151,7 +150,21 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{ $empleadosListTable }}
+                            @foreach($empleadosListTable as $employed)
+                                <tr>
+                                    <td>{{ $employed->rut }}</td>
+                                    <td>{{ ucwords($employed->firstname) }}</td>
+                                    <td>{{ ucwords($employed->paterno)." ".ucwords($employed->materno) }}</td>
+                                    @if($employed->status == 1)
+                                        <td>Activo</td>
+                                    @else
+                                        <td>Deshabilitado</td>
+                                    @endif
+                                    <td>
+                                        <input type="checkbox" class="flat-orange" name="employedIdOperating" value="{{ $employed->rut }}">
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                 </div>
