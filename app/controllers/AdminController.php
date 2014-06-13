@@ -4,6 +4,8 @@ use SimpleList\Repositories\EmpleadoRepo;
 use SimpleList\Repositories\CentroRepo;
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CargoRepo;
+use SimpleList\Managers\EmpleadoManager;
+use SimpleList\Managers\CentroManager;
 
 class AdminController extends BaseController {
     /*
@@ -46,78 +48,7 @@ class AdminController extends BaseController {
 
     public function addEmployed(){
         if(Request::ajax()){
-
-            $rutEmployed = str_replace(".", "", Input::get('rut'));
-            $rutEmployed = str_replace(",", "", $rutEmployed);
-            $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
-            $rutEmployed .= "-";
-            $rutEmployed .= substr(Input::get('rut'), -1);
-
-            $validation = Validator::make(
-                array(
-                    'rut' => $rutEmployed,
-                    'name' => Input::get('name'),
-                    'ape_paterno' => Input::get('ape_paterno'),
-                    'direction' => Input::get('direction'),
-                    'phone' => Input::get('phone'),
-                    'movil' => Input::get('movil'),
-                    'prevision' => Input::get('prevision'),
-                    'cargo' => Input::get('cargo'),
-                    'centro' => Input::get('centro')
-                ),
-                array(
-                    'rut' => 'required|unique:empleado,id',
-                    'name' => 'required',
-                    'ape_paterno' => 'required',
-                    'direction' => 'required',
-                    'phone' => 'numeric',
-                    'movil' => 'required|numeric',
-                    'prevision' => 'required',
-                    'cargo' => 'required|numeric',
-                    'centro' => 'required|numeric'
-                )
-            );
-
-            if($validation->fails()){
-                $errores = $validation->messages()->all();
-                $mensajes = "<ul class='text-red'>";
-                foreach ($errores as $row){
-                    $mensajes .= "<li>".$row."</li>";
-                }
-                $mensajes .= "</ul>";
-                $response = array(
-                    'status' => false,
-                    'motivo' => "Hay campos que no son correctos",
-                    'errores' => $mensajes,
-                    'detalle' => "<strong>Woou! </strong> No se ha podido ingresar el registro ya que hay campos invalidos:"
-                );
-            }
-            else{
-                $empleado = new Empleado;
-                $empleado->id = $rutEmployed;
-                $empleado->nombre = Input::get('name');
-                $empleado->ape_paterno = Input::get('ape_paterno');
-                $empleado->ape_materno = Input::get('ape_materno',null);
-                $empleado->direccion = Input::get('direction');
-                $empleado->fono_fijo = Input::get('phone',null);
-                $empleado->fono_movil = Input::get('movil');
-                $empleado->prevision = Input::get('prevision');
-                $empleado->cargo = Input::get('cargo');
-                $empleado->centro_costo = Input::get('centro');
-                $empleado->active = 1;
-                try {
-                    $empleado->save();
-                    $response = array(
-                        'status' => true
-                    );
-                }catch (Exception $e) {
-                    $response = array(
-                        'status' => false,
-                        'motivo' => "Error al tratar de guardar",
-                        'execption' => $e->getMessage()
-                    );   
-                }
-            }
+            $response = EmpleadoManager::save();
         }
         else{
             $response = array(
@@ -130,53 +61,7 @@ class AdminController extends BaseController {
 
     public function addCenter(){
         if(Request::ajax()){
-
-            $words = explode(" ", Input::get('name'));
-            $name = "";
-            foreach ($words as $word){
-                $name .= ucwords($word)." ";
-            }
-
-            $validation = Validator::make(
-                array(
-                    'name' => $name
-                ),
-                array(
-                    'name' => 'required|unique:centro_costo,nombre'
-                )
-            );
-
-            if($validation->fails()){
-                $errores = $validation->messages()->all();
-                $mensajes = "<ul class='text-red'>";
-                foreach ($errores as $row){
-                    $mensajes .= "<li>".$row."</li>";
-                }
-                $mensajes .= "</ul>";
-                $response = array(
-                    'status' => false,
-                    'motivo' => "Campos incorrectos",
-                    'errores' => $mensajes,
-                    'detalle' => "<strong>Woou! </strong> No se ha podido ingresar el registro ya que hay campos invalidos:"
-                );
-            }
-            else{
-                $center = new CentroCosto;
-                $center->nombre = $name;
-                $center->active = 1;
-                try {
-                    $center->save();
-                    $response = array(
-                        'status' => true
-                    );
-                }catch (Exception $e) {
-                    $response = array(
-                        'status' => false,
-                        'motivo' => "Error al tratar de guardar",
-                        'execption' => $e->getMessage()
-                    );   
-                }
-            }
+            $response = CentroManager::save();
         }
         else{
             $response = array(
@@ -184,6 +69,41 @@ class AdminController extends BaseController {
                 'motivo' => "Error en la solicitud"
             );
         }
+        return $response;
+    }
+
+    public function refreshCenter(){
+        $response = "";
+        $centersListTable = CentroRepo::all();
+        foreach($centersListTable as $center){
+            $response .= "<tr>";
+            $response .= "<td>".$center->nombre."</td>";
+            $response .= ($center->active == 1) ? "<td>Activo</td>" : "<td>Deshabilitado</td>";
+            $response .= "<td>".$center->created_at."</td>";
+            $response .= "<td>";
+            $response .= '<input type="checkbox" class="flat-orange" name="centerIdOperating" value="'.$center->value.'">';
+            $response .= "</td>";
+            $response .= "</tr>";
+        }
+
+        return $response;
+    }
+
+    public function refreshEmployed(){
+        $response = "";
+        $UserListTable = EmpleadoRepo::getEmpleoyesWithoutMe();
+        foreach($UserListTable as $employed){
+            $response .= "<tr>";
+            $response .= "<td>".$employed->rut."</td>";
+            $response .= "<td>".ucwords($employed->firstname)."</td>";
+            $response .= "<td>".ucwords($employed->paterno)." ".ucwords($employed->materno)."</td>";
+            $response .= ($employed->status == 1) ? "<td>Activo</td>" : "<td>Deshabilitado</td>";
+            $response .= "<td>";
+            $response .= '<input type="checkbox" class="flat-orange" name="employedIdOperating" value="'.$employed->rut.'">';
+            $response .= "</td>";
+            $response .= "</tr>";
+        }
+
         return $response;
     }
 

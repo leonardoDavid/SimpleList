@@ -120,6 +120,17 @@ else {
 	/* API method to get paging information */
 	$.fn.dataTableExt.oApi.fnPagingInfo = function ( oSettings )
 	{
+		$('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
+            checkboxClass: 'icheckbox_flat-orange',
+            radioClass: 'iradio_flat-orange'
+        });
+		$('input[type="checkbox"]').on('ifChecked', function(event){
+	        values.push($(this).val());
+	    });
+
+	    $('input[type="checkbox"]').on('ifUnchecked', function(event){
+	        values.pop($(this).val());
+	    });
 		return {
 			"iStart":         oSettings._iDisplayStart,
 			"iEnd":           oSettings.fnDisplayEnd(),

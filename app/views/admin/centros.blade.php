@@ -67,6 +67,7 @@
         <!-- Buscar/Eliminar centro -->
 	    <div class="col-xs-12 col-md-6">
             <div class="box box-info">
+                <div class="overlay" data-autohide="1" id="over-center"></div>
                 <div class="box-header">
                     <div class="pull-right box-tools">
                         <button class="btn btn-info btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
@@ -96,7 +97,7 @@
                                     @endif
                                     <td>{{ $center->created_at }}</td>
                                     <td>
-                                        <input type="checkbox" class="flat-orange" name="centerIdOperating" value="{{ $center->value }}">
+                                        <input type="checkbox" class="flat-orange" name="centerIdOperating" value="{{ $center->id }}">
                                     </td>
                                 </tr>
                             @endforeach
@@ -106,9 +107,9 @@
                 <div class="box-footer clearfix">
                     <p class="pull-left">A los marcados</p>
                     <div class="pull-right">
-                        <button class="btn btn-default" id="addEmployed"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
-                        <button class="btn btn-default" id="addEmployed"><span>Activar</span> <i class="fa fa-check"></i></button>
-                        <button class="btn btn-default" id="addEmployed"><span>Desactivar</span> <i class="fa fa-times"></i></button>
+                        <button class="btn btn-default" id="deleteCenter"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-default" id="enabledCenter"><span>Activar</span> <i class="fa fa-check"></i></button>
+                        <button class="btn btn-default" id="disbledCenter"><span>Desactivar</span> <i class="fa fa-times"></i></button>
                     </div>
                 </div>
             </div>
@@ -182,61 +183,96 @@
     	clearFormAdd();
     });
 
+    $('#refresh').click(function(event){
+        $.ajax({
+            url: '/admin/centros/refresh',
+            type: 'post',
+            beforeSend : function(){
+                $('#over-center').show();
+            },
+            success : function(response){
+                $('#centersTable tbody').html(response);
+                $('#over-center').fadeOut();
+                $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
+                    checkboxClass: 'icheckbox_flat-orange',
+                    radioClass: 'iradio_flat-orange'
+                });
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-center').fadeOut();
+                $('#error-server').modal();
+            }
+        });        
+    });
+
+    $('input[type="checkbox"]').on('ifChecked', function(event){
+        values.push($(this).val());
+    });
+
+    $('input[type="checkbox"]').on('ifUnchecked', function(event){
+        values.pop($(this).val());
+    });
+
+    $('#deleteCenter,#enabledCenter,#disbledCenter').click(function(event) {
+        console.log(values);
+    });
+
+    $('input[type="text"]').focus(function(event){
+        $(this).parent().removeClass('has-error');
+    });
+
+    $('#addCenterForm').submit(function(event){
+        event.preventDefault();
+        if(validate()){
+            $('#over-add').fadeIn();
+            $('#addCenter span').text("Agregando...");
+            $.ajax({
+                url: '/admin/centros/add',
+                type: 'post',
+                data: { 
+                    name : $('#name').val()
+                },
+                success : function(response){
+                    if(response['status']){
+                        $(".afterAdd").fadeIn();
+                    }
+                    else{
+                        $('#error-add').text(response['motivo']).fadeIn();
+                        $('#msj-error').html(response['detalle']);
+                        $('#list-error').html(response['errores']);
+                        $('#error-server').modal();
+                        $('#over-add').fadeOut();
+                        $('#addCenter span').text("Agregar");
+                        setTimeout(function() {
+                            $('#error-add').fadeOut();
+                        }, 3000);
+                    }
+                },
+                error : function(xhr){
+                    $('#error-add').text("Existe un error de conexión, intente más tarde").fadeIn();
+                    $('#over-add').fadeOut();
+                    $('#addCenter span').text("Agregar");
+                    setTimeout(function() {
+                        $('#error-add').fadeOut();
+                    }, 3000);
+                }
+            });
+        }
+    });
+
     function clearFormAdd(){
         $('#name').val("");
         $('#addCenter span').text("Agregar");
     }
 
-    $('input[type="text"]').focus(function(event){
-    	$(this).parent().removeClass('has-error');
-    });
-
-    $('#addCenterForm').submit(function(event){
-    	event.preventDefault();
-    	if(validate()){
-    		$('#over-add').fadeIn();
-    		$('#addCenter span').text("Agregando...");
-    		$.ajax({
-    			url: '/admin/centros/add',
-    			type: 'post',
-    			data: { 
-    				name : $('#name').val()
-    			},
-    			success : function(response){
-    				if(response['status']){
-    					$(".afterAdd").fadeIn();
-    				}
-    				else{
-    					$('#error-add').text(response['motivo']).fadeIn();
-                        $('#msj-error').html(response['detalle']);
-                        $('#list-error').html(response['errores']);
-                        $('#error-server').modal();
-    					$('#over-add').fadeOut();
-    					$('#addCenter span').text("Agregar");
-    					setTimeout(function() {
-    						$('#error-add').fadeOut();
-    					}, 3000);
-    				}
-    			},
-    			error : function(xhr){
-    				$('#error-add').text("Existe un error de conexión, intente más tarde").fadeIn();
-    				$('#over-add').fadeOut();
-    				$('#addCenter span').text("Agregar");
-    				setTimeout(function() {
-    					$('#error-add').fadeOut();
-    				}, 3000);
-    			}
-    		});
-    	}
-    });
-
     function validate(){
-    	if($('#name').val().trim() != "")
-    		return true;
-    	else{
-			$('#name').parent().addClass('has-error');
-    		return false;
-    	}
+        if($('#name').val().trim() != "")
+            return true;
+        else{
+            $('#name').parent().addClass('has-error');
+            return false;
+        }
     }
 @stop
 

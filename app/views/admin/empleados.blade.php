@@ -130,6 +130,7 @@
         <!-- Buscar/Eliminar empleado -->
 	    <div class="col-xs-12 col-md-6">
             <div class="box box-info">
+                <div class="overlay" data-autohide="1" id="over-employed"></div>
                 <div class="box-header">
                     <div class="pull-right box-tools">
                         <button class="btn btn-info btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
@@ -171,9 +172,9 @@
                 <div class="box-footer clearfix">
                     <p class="pull-left">A los marcados</p>
                     <div class="pull-right">
-                        <button class="btn btn-default" id="addEmployed"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
-                        <button class="btn btn-default" id="addEmployed"><span>Activar</span> <i class="fa fa-check"></i></button>
-                        <button class="btn btn-default" id="addEmployed"><span>Desactivar</span> <i class="fa fa-times"></i></button>
+                        <button class="btn btn-default" id="deleteEmployed"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-default" id="enabledEmployed"><span>Activar</span> <i class="fa fa-check"></i></button>
+                        <button class="btn btn-default" id="disbledEmployed"><span>Desactivar</span> <i class="fa fa-times"></i></button>
                     </div>
                 </div>
             </div>
@@ -243,6 +244,29 @@
     	$('#over-add').fadeOut();
     });
 
+    $('#refresh').click(function(event){
+        $.ajax({
+            url: '/admin/empleados/refresh',
+            type: 'post',
+            beforeSend : function(){
+                $('#over-employed').show();
+            },
+            success : function(response){
+                $('#employes tbody').html(response);
+                $('#over-employed').fadeOut();
+                $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
+                    checkboxClass: 'icheckbox_flat-orange',
+                    radioClass: 'iradio_flat-orange'
+                });
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-employed').fadeOut();
+                $('#error-server').modal();
+            }
+        });        
+    });
+
     $('#clearForm').click(function(event) {
     	clearFormAdd();
     });
@@ -298,6 +322,18 @@
 
     $('input[type="text"],select[data-requiered="1"]').focus(function(event){
     	$(this).parent().removeClass('has-error');
+    });
+
+    $('input[type="checkbox"]').on('ifChecked', function(event){
+        values.push($(this).val());
+    });
+
+    $('input[type="checkbox"]').on('ifUnchecked', function(event){
+        values.pop($(this).val());
+    });
+
+    $('#deleteEmployed,#enabledEmployed,#disbledEmployed').click(function(event) {
+        console.log(values);
     });
 
     function validate(){

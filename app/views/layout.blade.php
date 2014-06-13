@@ -65,6 +65,7 @@
         <script src="/js/jquery.js"></script>
         <script>
             var log;
+            var values = new Array();
             $(document).on('ready',function(){
                 $('.dropdown-toggle').dropdown();
                 @yield('scriptsInLine')
