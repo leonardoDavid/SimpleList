@@ -66,4 +66,63 @@ class CentroManager{
         return $response;
     }
 
+    public static function enabled($disabled=null){
+        $ids = explode(",", Input::get('ids'));
+        $pased = true;
+        $centersEnabled = array();
+        foreach ($ids as $center){
+            $validation = Validator::make(
+                array(
+                    'id' => $center
+                ),
+                array(
+                    'id' => 'exists:centro_costo,id'
+                )
+            );
+
+            if($validation->fails()){
+                $pased = false;
+                break;
+            }
+            else{
+                array_push($centersEnabled, $center);
+            }
+        }
+
+        if($pased){
+            foreach ($centersEnabled as $id){
+                $center = CentroCosto::find($id);
+                $center->active = (is_null($disabled)) ? 1 : 0;
+                try {
+                    $center->save();
+                    $status = true;
+                }catch (Exception $e) {
+                    $status = false;
+                    $response = array(
+                        'status' => false,
+                        'motivo' => "Interrupción en el proceso de actualización",
+                        'execption' => $e->getMessage()
+                    );
+                }
+                if($status){
+                    $response = array(
+                        'status' => true
+                    );
+                }
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Hay usuarios no registrados en el sistema, imposible actualizar"
+            );            
+        }
+
+        return $response;
+    }
+
+    public static function disabled(){
+        return CentroManager::enabled(1);
+    }
+
 }

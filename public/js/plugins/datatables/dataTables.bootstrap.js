@@ -167,7 +167,7 @@ else {
 				$(els[1]).bind( 'click.DT', { action: "next" }, fnClickHandler );
 			},
 
-			"fnUpdate": function ( oSettings, fnDraw ) {
+			"fnUpdate": function ( oSettings, fnDraw ){
 				var iListLength = 4;
 				var oPaging = oSettings.oInstance.fnPagingInfo();
 				var an = oSettings.aanFeatures.p;

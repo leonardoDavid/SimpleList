@@ -133,17 +133,39 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="confirm" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">SimpleList</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btn-enabled">Aceptar</button>
+                    <button class="btn btn-primary" id="btn-disabled">Aceptar</button>
+                    <button class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scriptsInLine')
+    var tableDataCenters;
+
 	$(function() {
         $.ajaxSetup({
             headers: {
                 'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
             }
         });
+        trackSelected();
         $('*[data-autohide="1"]').hide();
-        $("#centersTable").DataTable({
+        tableDataCenters = $("#centersTable").DataTable({
             "oLanguage": {
                 "sEmptyTable": "Sin Datos",
                 "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
@@ -167,10 +189,6 @@
                     '</select>'+' regsitros'
             }
         });
-        $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
-            checkboxClass: 'icheckbox_flat-orange',
-            radioClass: 'iradio_flat-orange'
-        });
     });
 
     $('#addMoreCenters').click(function(event){
@@ -184,38 +202,75 @@
     });
 
     $('#refresh').click(function(event){
+        refreshTable();
+    });
+
+    $('#disbledCenter').click(function(event) {
+        $('#btn-enabled').hide();
+        $('#btn-disabled').show();
+        $('#confirm-text').text("¿Realmente desea deshabilitar a los Centros de Costos seleccionados?");
+        $('#confirm').modal();
+    });
+
+    $('#enabledCenter').click(function(event) {
+        $('#btn-enabled').show();
+        $('#btn-disabled').hide();
+        $('#confirm-text').text("¿Realmente desea habilitar a los Centros de Costos seleccionados?");
+        $('#confirm').modal();
+    });
+
+    $('#btn-enabled').click(function(event){
         $.ajax({
-            url: '/admin/centros/refresh',
+            url: '/admin/centros/enabled',
             type: 'post',
-            beforeSend : function(){
+            data: { 'ids': values.toString() },
+            beforeSend:function(){
                 $('#over-center').show();
+                $('#confirm').modal('hide');
             },
             success : function(response){
-                $('#centersTable tbody').html(response);
-                $('#over-center').fadeOut();
-                $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
-                    checkboxClass: 'icheckbox_flat-orange',
-                    radioClass: 'iradio_flat-orange'
-                });
+                if(response['status']){
+                    refreshTable();
+                }
+                else{
+                    $('#msj-error').text(response['motivo']);
+                    $('#over-center').fadeOut();
+                    $('#error-server').modal();
+                }
             },
             error : function(xhr){
                 $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
                 $('#over-center').fadeOut();
                 $('#error-server').modal();
             }
-        });        
+        });
     });
 
-    $('input[type="checkbox"]').on('ifChecked', function(event){
-        values.push($(this).val());
-    });
-
-    $('input[type="checkbox"]').on('ifUnchecked', function(event){
-        values.pop($(this).val());
-    });
-
-    $('#deleteCenter,#enabledCenter,#disbledCenter').click(function(event) {
-        console.log(values);
+    $('#btn-disabled').click(function(event){
+        $.ajax({
+            url: '/admin/centros/disabled',
+            type: 'post',
+            data: { 'ids': values.toString() },
+            beforeSend:function(){
+                $('#over-center').show();
+                $('#confirm').modal('hide');
+            },
+            success : function(response){
+                if(response['status']){
+                    refreshTable();
+                }
+                else{
+                    $('#msj-error').text(response['motivo']);
+                    $('#over-center').fadeOut();
+                    $('#error-server').modal();
+                }
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-center').fadeOut();
+                $('#error-server').modal();
+            }
+        });
     });
 
     $('input[type="text"]').focus(function(event){
@@ -260,6 +315,51 @@
             });
         }
     });
+
+    function trackSelected(){
+        $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
+            checkboxClass: 'icheckbox_flat-orange',
+            radioClass: 'iradio_flat-orange'
+        });
+        $('input[type="checkbox"]').attr('checked',false);
+        values = [];
+        $('input[type="checkbox"]').on('ifChecked', function(event){
+            values.push($(this).val());
+        });
+        $('input[type="checkbox"]').on('ifUnchecked', function(event){
+            values.pop($(this).val());
+        });        
+    }
+
+    function refreshTable(){
+        tableDataCenters._fnClearTable();
+        $.ajax({
+            url: '/admin/centros/refresh',
+            type: 'post',
+            beforeSend : function(){
+                $('#over-center').show();
+            },
+            success : function(response){
+                $.each(response, function(index, val) {
+                    var tmp = new Array();
+                    tmp.push(response[index]['name']);
+                    tmp.push(response[index]['active']);
+                    tmp.push(response[index]['added']['date']);
+                    tmp.push(response[index]['checkbox']);
+                    tableDataCenters._fnAddData(tmp);
+                    tableDataCenters._fnReDraw();
+                });
+                $('#over-center').fadeOut();
+                trackSelected();
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-center').fadeOut();
+                $('#error-server').modal();
+            }
+        });    
+        tableDataCenters._fnReDraw();       
+    }
 
     function clearFormAdd(){
         $('#name').val("");

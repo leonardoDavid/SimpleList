@@ -28,9 +28,14 @@ Route::group(array('before' => 'auth'), function(){
 		return Redirect::to('/admin/empleados');
 	});
 	Route::post('/admin/empleados/add','AdminController@addEmployed');
+	Route::post('/admin/empleados/refresh','AdminController@refreshEmployed');
+	Route::post('/admin/empleados/enabled','AdminController@enabledEmployed');
+	Route::post('/admin/empleados/disabled','AdminController@disabledEmployed');
+	
 	Route::post('/admin/centros/add','AdminController@addCenter');
 	Route::post('/admin/centros/refresh','AdminController@refreshCenter');
-	Route::post('/admin/empleados/refresh','AdminController@refreshEmployed');
+	Route::post('/admin/centros/enabled','AdminController@enabledCenter');
+	Route::post('/admin/centros/disabled','AdminController@disabledCenter');
 
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');

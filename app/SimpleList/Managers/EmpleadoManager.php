@@ -1,6 +1,7 @@
 <?php namespace SimpleList\Managers;
 
 use SimpleList\Entities\Empleado;
+use SimpleList\Repositories\EmpleadoRepo;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
 
@@ -89,6 +90,73 @@ class EmpleadoManager{
         }
 
         return $response;
+    }
+
+    public static function enabled($disabled=null){
+        $ruts = explode(",", Input::get('ids'));
+        $pased = true;
+        $rutsEnabled = array();
+        foreach ($ruts as $employ){
+
+            $rutEmployed = str_replace(".", "", $employ);
+            $rutEmployed = str_replace(",", "", $rutEmployed);
+            $rutEmployed = str_replace("-", "", $rutEmployed);
+            $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
+            $rutEmployed .= "-";
+            $rutEmployed .= substr($employ, -1);
+
+            $validation = Validator::make(
+                array(
+                    'rut' => $rutEmployed
+                ),
+                array(
+                    'rut' => 'exists:empleado,id'
+                )
+            );
+
+            if($validation->fails()){
+                $pased = false;
+                break;
+            }
+            else{
+                array_push($rutsEnabled, $rutEmployed);
+            }
+        }
+
+        if($pased){
+            foreach ($rutsEnabled as $rut){
+                $empleado = Empleado::find($rut);
+                $empleado->active = (is_null($disabled)) ? 1 : 0;
+                try {
+                    $empleado->save();
+                    $status = true;
+                }catch (Exception $e) {
+                    $status = false;
+                    $response = array(
+                        'status' => false,
+                        'motivo' => "Interrupción en el proceso de actualización",
+                        'execption' => $e->getMessage()
+                    );
+                }
+                if($status){
+                    $response = array(
+                        'status' => true
+                    );
+                }
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Hay usuarios no registrados en el sistema, imposible actualizar"
+            );            
+        }
+
+        return $response;
+    }
+
+    public static function disabled(){
+        return EmpleadoManager::enabled(1);
     }
 
 }

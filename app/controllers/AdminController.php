@@ -73,37 +73,89 @@ class AdminController extends BaseController {
     }
 
     public function refreshCenter(){
-        $response = "";
+        $response = array();
+        $index = 0;
         $centersListTable = CentroRepo::all();
         foreach($centersListTable as $center){
-            $response .= "<tr>";
-            $response .= "<td>".$center->nombre."</td>";
-            $response .= ($center->active == 1) ? "<td>Activo</td>" : "<td>Deshabilitado</td>";
-            $response .= "<td>".$center->created_at."</td>";
-            $response .= "<td>";
-            $response .= '<input type="checkbox" class="flat-orange" name="centerIdOperating" value="'.$center->value.'">';
-            $response .= "</td>";
-            $response .= "</tr>";
+            $tmp = array(
+                'name' => $center->nombre,
+                'active' => ($center->active == 1) ? "Activo" : "Deshabilitado",
+                'added' => $center->created_at,
+                'checkbox' => "<input type='checkbox' class='flat-orange' name='employedIdOperating' value='".$center->id."'>"
+            );
+            $response[$index] = $tmp;
+            $index++;
         }
-
         return $response;
     }
 
     public function refreshEmployed(){
-        $response = "";
+        $response = array();
+        $index = 0;
         $UserListTable = EmpleadoRepo::getEmpleoyesWithoutMe();
         foreach($UserListTable as $employed){
-            $response .= "<tr>";
-            $response .= "<td>".$employed->rut."</td>";
-            $response .= "<td>".ucwords($employed->firstname)."</td>";
-            $response .= "<td>".ucwords($employed->paterno)." ".ucwords($employed->materno)."</td>";
-            $response .= ($employed->status == 1) ? "<td>Activo</td>" : "<td>Deshabilitado</td>";
-            $response .= "<td>";
-            $response .= '<input type="checkbox" class="flat-orange" name="employedIdOperating" value="'.$employed->rut.'">';
-            $response .= "</td>";
-            $response .= "</tr>";
+            $tmp = array(
+                'rut' => $employed->rut,
+                'name' => ucwords($employed->firstname),
+                'lastname' => ucwords($employed->paterno)." ".ucwords($employed->materno),
+                'active' => ($employed->status == 1) ? "Activo" : "Deshabilitado",
+                'checkbox' => "<input type='checkbox' class='flat-orange' name='employedIdOperating' value='".$employed->rut."'>"
+            );
+            $response[$index] = $tmp;
+            $index++;
         }
+        return $response;
+    }
 
+    public function enabledEmployed(){
+        if(Request::ajax()){
+            $response = EmpleadoManager::enabled();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
+    public function disabledEmployed(){
+        if(Request::ajax()){
+            $response = EmpleadoManager::disabled();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
+    public function enabledCenter(){
+        if(Request::ajax()){
+            $response = CentroManager::enabled();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
+    public function disabledCenter(){
+        if(Request::ajax()){
+            $response = CentroManager::disabled();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
         return $response;
     }
 

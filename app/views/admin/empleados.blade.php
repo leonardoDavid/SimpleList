@@ -198,9 +198,30 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="confirm" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">SimpleList</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="confirm-text"></p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="btn-enabled">Aceptar</button>
+                    <button class="btn btn-primary" id="btn-disabled">Aceptar</button>
+                    <button class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scriptsInLine')
+    var tableDataEmployes;
+
 	$(function() {
         $.ajaxSetup({
             headers: {
@@ -208,7 +229,8 @@
             }
         });
         $('*[data-autohide="1"]').hide();
-        $("#employes").DataTable({
+        trackSelected();
+        tableDataEmployes = $("#employes").DataTable({
             "oLanguage": {
                 "sEmptyTable": "Sin Datos",
                 "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
@@ -232,10 +254,6 @@
                     '</select>'+' regsitros'
             }
         });
-        $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
-            checkboxClass: 'icheckbox_flat-orange',
-            radioClass: 'iradio_flat-orange'
-        });
     });
 
     $('#addMoreEmployed').click(function(event){
@@ -245,26 +263,7 @@
     });
 
     $('#refresh').click(function(event){
-        $.ajax({
-            url: '/admin/empleados/refresh',
-            type: 'post',
-            beforeSend : function(){
-                $('#over-employed').show();
-            },
-            success : function(response){
-                $('#employes tbody').html(response);
-                $('#over-employed').fadeOut();
-                $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
-                    checkboxClass: 'icheckbox_flat-orange',
-                    radioClass: 'iradio_flat-orange'
-                });
-            },
-            error : function(xhr){
-                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
-                $('#over-employed').fadeOut();
-                $('#error-server').modal();
-            }
-        });        
+        refreshTable();
     });
 
     $('#clearForm').click(function(event) {
@@ -324,17 +323,141 @@
     	$(this).parent().removeClass('has-error');
     });
 
-    $('input[type="checkbox"]').on('ifChecked', function(event){
-        values.push($(this).val());
+    $('#disbledEmployed').click(function(event) {
+        $('#btn-enabled').hide();
+        $('#btn-disabled').show();
+        $('#confirm-text').text("¿Realmente desea deshabilitar a los empleados seleccionados?");
+        $('#confirm').modal();
     });
 
-    $('input[type="checkbox"]').on('ifUnchecked', function(event){
-        values.pop($(this).val());
+    $('#enabledEmployed').click(function(event) {
+        $('#btn-enabled').show();
+        $('#btn-disabled').hide();
+        $('#confirm-text').text("¿Realmente desea habilitar a los empleados seleccionados?");
+        $('#confirm').modal();
     });
 
-    $('#deleteEmployed,#enabledEmployed,#disbledEmployed').click(function(event) {
-        console.log(values);
+    $('#btn-enabled').click(function(event){
+        $.ajax({
+            url: '/admin/empleados/enabled',
+            type: 'post',
+            data: { 'ids': values.toString() },
+            beforeSend:function(){
+                $('#over-employed').show();
+                $('#confirm').modal('hide');
+            },
+            success : function(response){
+                if(response['status']){
+                    refreshTable();
+                }
+                else{
+                    $('#msj-error').text(response['motivo']);
+                    $('#over-employed').fadeOut();
+                    $('#error-server').modal();
+                }
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-employed').fadeOut();
+                $('#error-server').modal();
+            }
+        });
     });
+
+    $('#btn-disabled').click(function(event){
+        $.ajax({
+            url: '/admin/empleados/disabled',
+            type: 'post',
+            data: { 'ids': values.toString() },
+            beforeSend:function(){
+                $('#over-employed').show();
+                $('#confirm').modal('hide');
+            },
+            success : function(response){
+                if(response['status']){
+                    refreshTable();
+                }
+                else{
+                    $('#msj-error').text(response['motivo']);
+                    $('#over-employed').fadeOut();
+                    $('#error-server').modal();
+                }
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-employed').fadeOut();
+                $('#error-server').modal();
+            }
+        });
+    });
+
+    $('#phone,#movil').keypress(function(event){
+        if(event.which != 8 && isNaN(String.fromCharCode(event.which))){
+            event.preventDefault();
+        }
+    });
+
+    $('#rut').keypress(function(event){
+        var pass = true;
+        if($('#rut').val().length == 9 || ($('#rut').val().slice(-1) == "k" || $('#rut').val().slice(-1) == "K"))
+            pass = false;
+        else if( (event.which == 107 || event.which == 75) ){
+            if(!($('#rut').val().length >=7))
+                pass = false;
+        }
+        else if(event.which != 8 && isNaN(String.fromCharCode(event.which)))
+            pass = false;
+
+        if(!pass)
+            event.preventDefault();
+    });
+
+    function refreshTable(){
+        tableDataEmployes._fnClearTable();
+        $.ajax({
+            url: '/admin/empleados/refresh',
+            type: 'post',
+            beforeSend : function(){
+                tableDataEmployes._fnClearTable();
+                $('#over-employed').show();
+            },
+            success : function(response){
+                $.each(response, function(index, val) {
+                    var tmp = new Array();
+                    tmp.push(response[index]['rut']);
+                    tmp.push(response[index]['name']);
+                    tmp.push(response[index]['lastname']);
+                    tmp.push(response[index]['active']);
+                    tmp.push(response[index]['checkbox']);
+                    tableDataEmployes._fnAddData(tmp);
+                    tableDataEmployes._fnReDraw();
+                });
+                $('#over-employed').fadeOut();
+                trackSelected();
+            },
+            error : function(xhr){
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#over-employed').fadeOut();
+                $('#error-server').modal();
+            }
+        });  
+        tableDataEmployes._fnReDraw();    
+    }
+
+    function trackSelected(){
+        $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
+            checkboxClass: 'icheckbox_flat-orange',
+            radioClass: 'iradio_flat-orange'
+        });
+        $('input[type="checkbox"]').attr('checked',false);
+        values = [];
+        $('input[type="checkbox"]').on('ifChecked', function(event){
+            values.push($(this).val());
+        });
+        $('input[type="checkbox"]').on('ifUnchecked', function(event){
+            values.pop($(this).val());
+        });        
+    }
 
     function validate(){
     	var hasError = true;
@@ -369,27 +492,6 @@
     	$('#centro').val(0);
         $('#addEmployed span').text("Agregar");
     }
-
-    $('#phone,#movil').keypress(function(event){
-      	if(event.which != 8 && isNaN(String.fromCharCode(event.which))){
-          	event.preventDefault();
-      	}
-  	});
-
-    $('#rut').keypress(function(event){
-        var pass = true;
-        if($('#rut').val().length == 9 || ($('#rut').val().slice(-1) == "k" || $('#rut').val().slice(-1) == "K"))
-            pass = false;
-        else if( (event.which == 107 || event.which == 75) ){
-            if(!($('#rut').val().length >=7))
-                pass = false;
-        }
-        else if(event.which != 8 && isNaN(String.fromCharCode(event.which)))
-            pass = false;
-
-        if(!pass)
-            event.preventDefault();
-    });
 
 @stop
 
