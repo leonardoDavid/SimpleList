@@ -21,21 +21,26 @@ Route::post('login', array('before' => 'csrf', 'uses' => 'AuthController@postLog
 |
 */
 Route::group(array('before' => 'auth'), function(){
-	//Administrador
-	Route::get('/admin/empleados', 'AdminController@getEmpleados');
-	Route::get('/admin/centros', 'AdminController@getCentros');
+	//Administrador de Empleados
 	Route::get('/admin',function(){
 		return Redirect::to('/admin/empleados');
 	});
+	Route::get('/admin/empleados', 'AdminController@getEmpleados');
 	Route::post('/admin/empleados/add','AdminController@addEmployed');
 	Route::post('/admin/empleados/refresh','AdminController@refreshEmployed');
 	Route::post('/admin/empleados/enabled','AdminController@enabledEmployed');
 	Route::post('/admin/empleados/disabled','AdminController@disabledEmployed');
 	
+	//Administrador de Centros de Costo
+	Route::get('/admin/centros', 'AdminController@getCentros');
 	Route::post('/admin/centros/add','AdminController@addCenter');
 	Route::post('/admin/centros/refresh','AdminController@refreshCenter');
 	Route::post('/admin/centros/enabled','AdminController@enabledCenter');
 	Route::post('/admin/centros/disabled','AdminController@disabledCenter');
+
+	//Asistencia
+	Route::get('/asistencia/tomar', 'AsistenciaController@getTake');
+	Route::post('/asistencia/tomar', 'AsistenciaController@getListAssistance');
 
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');

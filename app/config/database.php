@@ -57,7 +57,7 @@ return array(
 			'host'      => 'localhost',
 			'database'  => 'SimpleList',
 			'username'  => 'root',
-			'password'  => 'sql.,evo',
+			'password'  => 'desarrollo.,2014',
 			'charset'   => 'utf8',
 			'collation' => 'utf8_spanish_ci',
 			'prefix'    => '',

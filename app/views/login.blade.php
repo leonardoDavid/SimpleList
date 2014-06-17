@@ -13,6 +13,7 @@
     <link href="/css/bootstrap.min.css" rel="stylesheet">
     <link href="/css/font-awesome.min.css" rel="stylesheet">
     <link href="/css/AdminLTE.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/theme.css">
 
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
@@ -76,8 +77,8 @@
     </section>
 
     <div class="overlay-loading">
-        <span class="loading"></span>
-        <span class="loading-text">Cargando ...</span>
+        <span class="loader"></span>
+        <span class="loader-text">Cargando</span>
     </div>
 
     <!-- Scripts -->

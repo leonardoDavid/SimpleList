@@ -61,13 +61,30 @@
             </aside>
         </div>
 
+        <!-- Loader -->
+        <div class="overlay-loading">
+            <span class="loader"></span>
+            <span class="loader-text">Cargando</span>
+        </div>
+
         <!-- Scripts -->
         <script src="/js/jquery.js"></script>
         <script>
             var log;
             var values = new Array();
             $(document).on('ready',function(){
+                $('.overlay-loading').fadeOut();
                 $('.dropdown-toggle').dropdown();
+                $('a').click(function(event) {
+                    if($(this).attr('href') != "#"){
+                        var tmpURL = $(this).attr('href');
+                        event.preventDefault();
+                        $('.overlay-loading').fadeIn();
+                        setTimeout(function() {
+                            window.location = tmpURL;
+                        }, 800);
+                    }
+                });
                 @yield('scriptsInLine')
             });
         </script>
