@@ -110,7 +110,7 @@ class EmpleadoManager{
                     'rut' => $rutEmployed
                 ),
                 array(
-                    'rut' => 'exists:empleado,id'
+                    'rut' => 'required|exists:empleado,id'
                 )
             );
 

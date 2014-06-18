@@ -39,6 +39,9 @@ Route::group(array('before' => 'auth'), function(){
 	Route::post('/admin/centros/disabled','AdminController@disabledCenter');
 
 	//Asistencia
+	Route::get('/asistencia',function(){
+		return Redirect::to('/asistencia/tomar');
+	});
 	Route::get('/asistencia/tomar', 'AsistenciaController@getTake');
 	Route::post('/asistencia/tomar', 'AsistenciaController@getListAssistance');
 

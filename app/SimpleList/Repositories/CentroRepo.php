@@ -18,17 +18,22 @@ class CentroRepo{
         return CentroCosto::where('active','=','1')->count();
     }
 
-    public static function getSelectCenters(){
+    public static function getSelectCenters($id=null){
         $options = "<option value='0'>Seleccione un Centro</option>";
         $centers = CentroCosto::where('active','=','1')->get();
         foreach ($centers as $row){
-            $options .= "<option value='".$row->id."'>".$row->nombre."</option>";
+            $selected = ($row->id == $id) ? "selected" : "";
+            $options .= "<option value='".$row->id."' ".$selected.">".$row->nombre."</option>";
         }
         return $options;
     }
 
     public static function all(){
         return CentroCosto::all();
+    }
+
+    public static function find($id){
+        return CentroCosto::find($id);
     }
 
 }

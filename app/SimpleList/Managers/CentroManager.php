@@ -76,7 +76,7 @@ class CentroManager{
                     'id' => $center
                 ),
                 array(
-                    'id' => 'exists:centro_costo,id'
+                    'id' => 'required|exists:centro_costo,id'
                 )
             );
 

@@ -2,6 +2,7 @@
 
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CentroRepo;
+use SimpleList\Repositories\EmpleadoRepo;
 
 class AsistenciaController extends BaseController {
     /*
@@ -19,31 +20,54 @@ class AsistenciaController extends BaseController {
 
         return View::make('asistencia.take',array(
             'titlePage' => "Asistencia",
-            'description' => "",
+            'description' => "Control Diario",
             'user' => JefaturaRepo::getUserNotification($user),
             'route' => Util::getTracert(),
             'menu' => Util::getMenu($user['name'],$user['img']),
             'centers' => CentroRepo::getSelectCenters(),
             'list' => "",
-            'dateSelected' => ""
+            'dateSelected' => "",
+            'disabled' => ""
         ));
     }
 
     public function getListAssistance(){
+        $validations = Validator::make(
+            array(
+                'centro' => Input::get('centro'),
+                'fecha' => Input::get('dateList')
+            ),
+            array(
+                'centro' => 'required|exists:centro_costo,id',
+                'fecha' => 'before_today'
+            )
+        );
+
+        //Se redirecciona en caso de que se tengan errores
+        if($validations->fails()){
+            $errores = $validations->messages()->all();
+            $mensajes = "";
+            foreach ($errores as $row){
+                $mensajes .= "<li>".$row."</li>";
+            }
+            return Redirect::to('/asistencia/tomar')->with('validations-error',$mensajes);
+        }
+
+        //Si no despliega la lista solicitada
         $user = JefaturaRepo::getUserData(Auth::user()->id);
+        $center = CentroRepo::find(Input::get('centro'));
+        $listEmployes = EmpleadoRepo::getTableListEmployes(Input::get('centro'),$center->nombre);
 
         return View::make('asistencia.take',array(
             'titlePage' => "Asistencia",
-            'description' => "",
+            'description' => "Control Diario",
             'user' => JefaturaRepo::getUserNotification($user),
             'route' => Util::getTracert(),
             'menu' => Util::getMenu($user['name'],$user['img']),
-            'centers' => CentroRepo::getSelectCenters(),
-            'list' => View::make('asistencia.listEmployes',array(
-                            'employes' => "<tr><td colspan='4'>En Construcción :)</td></tr>",
-                            'centerName' => 'centerName'
-                        )),
-            'dateSelected' => ""
+            'centers' => CentroRepo::getSelectCenters(Input::get('centro')),
+            'list' => $listEmployes,
+            'dateSelected' => Input::get('dateList'),
+            'disabled' => "disabled"
         ));
     }
 

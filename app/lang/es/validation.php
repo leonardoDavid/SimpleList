@@ -28,7 +28,7 @@ return array(
 		"array"   => "The :attribute must have between :min and :max items.",
 	),
 	"confirmed"            => "The :attribute confirmation does not match.",
-	"date"                 => "The :attribute is not a valid date.",
+	"date"                 => "El campo :attribute no es una fecha valida.",
 	"date_format"          => "The :attribute does not match the format :format.",
 	"different"            => "The :attribute and :other must be different.",
 	"digits"               => "The :attribute must be :digits digits.",
@@ -87,6 +87,7 @@ return array(
 			'rule-name' => 'custom-message',
 		),
 	),
+	'before_today' => "La fecha es superior al día de hoy",
 
 	/*
 	|--------------------------------------------------------------------------
