@@ -44,6 +44,7 @@ Route::group(array('before' => 'auth'), function(){
 	});
 	Route::get('/asistencia/tomar', 'AsistenciaController@getTake');
 	Route::post('/asistencia/tomar', 'AsistenciaController@getListAssistance');
+	Route::post('/asistencia/tomar/save', 'AsistenciaController@saveAssistance');
 
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');

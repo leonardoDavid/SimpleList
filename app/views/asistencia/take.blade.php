@@ -79,6 +79,42 @@
             {{ $list }}
         </div>
 	</div>
+
+	<div class="modal fade" id="error-server" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">SimpleList</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="msj-error"></p>
+                    <p id="list-error"></p>                       
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="comment-box" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h4 class="modal-title">SimpleList</h4>
+                </div>
+                <div class="modal-body">
+                	<textarea id="commet-text" class="comment-text" placeholder="Ingrese un comentario para el empleado"></textarea>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>
+                    <button class="btn btn-primary" id="saveComment">Guardar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('scriptsInLine')
@@ -113,6 +149,7 @@
     	});
     	return hasError;
     }
+    @yield('scriptsInLine')
 @stop
 
 @section('scripts')

@@ -32,25 +32,33 @@ class EmpleadoRepo{
                         ->select("empleado.ape_paterno as paterno","empleado.ape_materno as materno","empleado.nombre as firstname","empleado.id as rut",'empleado.active as status')
                         ->get();
         $list = "";
+        $values = "[";
+        $vuelta = 0;
 
         foreach ($employes as $employ){
             $estado = ($employ->status == 1) ? 'Activo' : 'Desactivado';
+            $values .= ($vuelta > 0) ? "," : "";
+            $values .= "'".str_replace("-","SL",$employ->rut)."ST1'";
 
             $list .= "<tr>";
             $list .= "<td>".$employ->rut."</td>";
             $list .= "<td>".ucwords($employ->firstname)."</td>";
             $list .= "<td>".ucwords($employ->paterno)." ".ucwords($employ->materno)."</td>";
             $list .= "<td>".$estado."</td>";
-            $list .= "<td><input type='checkbox' class='flat-orange' name='employedIdOperating' checked='checked' value='".$employ->rut."'></td>";
+            $list .= "<td><input type='checkbox' class='flat-orange' name='employedIdOperating' checked='checked' value='".str_replace("-","SL",$employ->rut)."'><span class='fa fa-comment minibtn-comment' data-comment='' id='".str_replace("-","SL",$employ->rut)."'></span></td>";
             $list .= "</tr>";
+
+            $vuelta++;
         }
+        $values .= "]";
 
         if($list == "")
             $list = "<tr><td colspan='5'>Sin Empleados Asociados</td></tr>";
 
         return View::make('asistencia.listEmployes',array(
                     'employes' => $list,
-                    'centerName' => $centro
+                    'centerName' => $centro,
+                    'values' => $values
                 ));
     }
 

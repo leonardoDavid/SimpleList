@@ -12,7 +12,7 @@ class CreateTableAsistencia extends Migration {
 	public function up(){
 		Schema::create('asistencia',function($tabla){
 			$tabla->increments('id')->unique();
-			$tabla->integer('id_empleado');
+			$tabla->string('id_empleado',10);
 			$tabla->text('comentario');
 			$tabla->boolean('active');
 			$tabla->timestamps();

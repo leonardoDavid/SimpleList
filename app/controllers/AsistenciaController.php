@@ -3,6 +3,7 @@
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CentroRepo;
 use SimpleList\Repositories\EmpleadoRepo;
+use SimpleList\Managers\AsistenciaManager;
 
 class AsistenciaController extends BaseController {
     /*
@@ -69,6 +70,20 @@ class AsistenciaController extends BaseController {
             'dateSelected' => Input::get('dateList'),
             'disabled' => "disabled"
         ));
+    }
+
+    public function saveAssistance(){
+        if(Request::ajax()){
+            $response = AsistenciaManager::save();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en el tipo de solicitud"
+            );
+        }
+
+        return json_encode($response);
     }
 
 }
