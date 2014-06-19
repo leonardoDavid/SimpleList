@@ -4,6 +4,7 @@ use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CentroRepo;
 use SimpleList\Repositories\EmpleadoRepo;
 use SimpleList\Repositories\AdelantoRepo;
+use SimpleList\Libraries\Util;
 
 class SiteController extends BaseController{
 	/*

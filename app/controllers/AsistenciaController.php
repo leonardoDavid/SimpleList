@@ -2,7 +2,8 @@
 
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CentroRepo;
-use SimpleList\Repositories\EmpleadoRepo;
+use SimpleList\Repositories\AsistenciaRepo;
+use SimpleList\Libraries\Util;
 use SimpleList\Managers\AsistenciaManager;
 
 class AsistenciaController extends BaseController {
@@ -54,22 +55,12 @@ class AsistenciaController extends BaseController {
             return Redirect::to('/asistencia/tomar')->with('validations-error',$mensajes);
         }
 
-        //Si no despliega la lista solicitada
-        $user = JefaturaRepo::getUserData(Auth::user()->id);
-        $center = CentroRepo::find(Input::get('centro'));
-        $listEmployes = EmpleadoRepo::getTableListEmployes(Input::get('centro'),$center->nombre);
-
-        return View::make('asistencia.take',array(
-            'titlePage' => "Asistencia",
-            'description' => "Control Diario",
-            'user' => JefaturaRepo::getUserNotification($user),
-            'route' => Util::getTracert(),
-            'menu' => Util::getMenu($user['name'],$user['img']),
-            'centers' => CentroRepo::getSelectCenters(Input::get('centro')),
-            'list' => $listEmployes,
-            'dateSelected' => Input::get('dateList'),
-            'disabled' => "disabled"
-        ));
+        if(AsistenciaRepo::existsList(Input::get('dateList'))){
+            return AsistenciaRepo::updateList(Input::get('dateList'));
+        }
+        else{
+            return AsistenciaRepo::newList();
+        }
     }
 
     public function saveAssistance(){

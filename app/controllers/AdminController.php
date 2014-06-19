@@ -4,6 +4,7 @@ use SimpleList\Repositories\EmpleadoRepo;
 use SimpleList\Repositories\CentroRepo;
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CargoRepo;
+use SimpleList\Libraries\Util;
 use SimpleList\Managers\EmpleadoManager;
 use SimpleList\Managers\CentroManager;
 

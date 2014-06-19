@@ -1,10 +1,13 @@
-<?php
+<?php namespace SimpleList\Libraries;
 
 use SimpleList\Entities\Jefatura;
 use SimpleList\Entities\CentroCosto;
 use SimpleList\Entities\SubMainMenu;
 use SimpleList\Entities\Cargo;
 use SimpleList\Entities\Empleado;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\View;
 
 class Util{
 

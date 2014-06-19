@@ -7,6 +7,7 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'AdminController' => $baseDir . '/app/controllers/AdminController.php',
+    'AsistenciaController' => $baseDir . '/app/controllers/AsistenciaController.php',
     'AuthController' => $baseDir . '/app/controllers/AuthController.php',
     'BaseController' => $baseDir . '/app/controllers/BaseController.php',
     'CargoSeeder' => $baseDir . '/app/database/seeds/CargoSeeder.php',
@@ -31,7 +32,6 @@ return array(
     'SiteController' => $baseDir . '/app/controllers/SiteController.php',
     'SubMainTableSeeder' => $baseDir . '/app/database/seeds/SubMainTableSeeder.php',
     'TestCase' => $baseDir . '/app/tests/TestCase.php',
-    'Util' => $baseDir . '/app/libs/Util.php',
     'Whoops\\Module' => $vendorDir . '/filp/whoops/src/deprecated/Zend/Module.php',
     'Whoops\\Provider\\Zend\\ExceptionStrategy' => $vendorDir . '/filp/whoops/src/deprecated/Zend/ExceptionStrategy.php',
     'Whoops\\Provider\\Zend\\RouteNotFoundStrategy' => $vendorDir . '/filp/whoops/src/deprecated/Zend/RouteNotFoundStrategy.php',
