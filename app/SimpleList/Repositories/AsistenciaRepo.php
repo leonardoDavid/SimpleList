@@ -1,6 +1,7 @@
 <?php namespace SimpleList\Repositories;
 
 use SimpleList\Entities\Asistencia;
+use SimpleList\Entities\Empleado;
 use SimpleList\Repositories\EmpleadoRepo;
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\CentroRepo;
@@ -8,6 +9,7 @@ use SimpleList\Libraries\Util;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class AsistenciaRepo{
 
@@ -20,10 +22,10 @@ class AsistenciaRepo{
     | que requieran informacion con respecto al modelo de Asistencia
     |
     */
-    public static function newList($update = null){
+    public static function newList($fecha = null){
         $user = JefaturaRepo::getUserData(Auth::user()->id);
         $center = CentroRepo::find(Input::get('centro'));
-        $listEmployes = (!is_null($update)) ? EmpleadoRepo::getTableListEmployes(Input::get('centro'),$center->nombre,$fecha) : EmpleadoRepo::getTableListEmployes(Input::get('centro'),$center->nombre);
+        $listEmployes = (!is_null($fecha)) ? EmpleadoRepo::getTableListEmployes(Input::get('centro'),$center->nombre,$fecha) : EmpleadoRepo::getTableListEmployes(Input::get('centro'),$center->nombre);
 
         return View::make('asistencia.take',array(
             'titlePage' => "Asistencia",
@@ -44,10 +46,12 @@ class AsistenciaRepo{
 
     public static function existsList($fecha = null){
         if(!empty($fecha)){
+            $tmp = explode("/", $fecha);
+            $tmp = $tmp[2]."-".$tmp[1]."-".$tmp[0];
             $empleados = Empleado::where('empleado.id','!=',Auth::user()->id_empleado)
                         ->join('asistencia','id_empleado','=','empleado.id')
-                        ->where('centro_costo','=',$idCenter)
-                        ->where('asistencia.created_at','LIKE',$tmp)
+                        ->where('empleado.centro_costo','=',Input::get('centro'))
+                        ->where(DB::raw('DATE(asistencia.created_at)'),'=',$tmp)
                         ->select("empleado.ape_paterno as paterno","empleado.ape_materno as materno","empleado.nombre as firstname","empleado.id as rut",'empleado.active as status','asistencia.comentario as comentario','asistencia.active as presencia')
                         ->count();
             return ($empleados > 0) ? true : false;

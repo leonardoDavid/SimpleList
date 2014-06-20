@@ -3,6 +3,7 @@
 use SimpleList\Entities\Asistencia;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
+use Illuminate\Support\Facades\DB;
 
 class AsistenciaManager{
 	
@@ -14,7 +15,7 @@ class AsistenciaManager{
     | Estas funciones son ituliozadas para agregar la lista de asistencia
     |
     */
-    public static function save(){
+    public static function save($update = false,$fecha = null){
         $values = json_decode(Input::get('values'));
         $ruts = array();
         foreach ($values as $row){
@@ -55,16 +56,33 @@ class AsistenciaManager{
         }
 
         if($pased){
+            if(!is_null($fecha)){
+                $fecha = explode("/", $fecha);
+                $fecha = $fecha[2]."-".$fecha[1]."-".$fecha[0];
+            }
             foreach ($rutsEnabled as $rut){
                 $dataContend = explode("#%&", $rut);
                 $tmp = explode("ST", $dataContend[0]);
-
-                $asistencia = new  Asistencia();
-                $asistencia->id_empleado = $tmp[0];
-                $asistencia->active = $tmp[1];
-                $asistencia->comentario = $dataContend[1];
+                
+                if($update){
+                    $asistencia = Asistencia::where('id_empleado','=',$tmp[0])
+                                    ->where(DB::raw('DATE(created_at)'),'=',$fecha)
+                                    ->get();
+                    $asistencia[0]->active = $tmp[1];
+                    $asistencia[0]->comentario = $dataContend[1];
+                }
+                else{
+                    $asistencia = new  Asistencia();
+                    $asistencia->id_empleado = $tmp[0];
+                    $asistencia->active = $tmp[1];
+                    $asistencia->comentario = $dataContend[1];
+                }
+                
                 try {
-                    $asistencia->save();
+                    if($update)
+                        $asistencia[0]->save();
+                    else
+                        $asistencia->save();
                     $status = true;
                 }catch (Exception $e) {
                     $status = false;
@@ -89,6 +107,10 @@ class AsistenciaManager{
         }
 
         return $response;
+    }
+
+    public static function update(){
+        return AsistenciaManager::save(true,Input::get('fecha'));
     }
 
 }

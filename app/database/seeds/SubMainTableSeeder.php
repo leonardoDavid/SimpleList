@@ -26,8 +26,8 @@ class SubMainTableSeeder extends Seeder{
             'active' => 1
         ));
         SubMainMenu::create(array(
-            'name' => "Estadisticas",
-            'url' => "/asistencia/estadisticas",
+            'name' => "Reportes",
+            'url' => "/asistencia/reportes",
             'icon' => "",
             'menu_id' => 3,
             'active' => 1
@@ -40,8 +40,8 @@ class SubMainTableSeeder extends Seeder{
             'active' => 1
         ));
         SubMainMenu::create(array(
-            'name' => "Estadisticas",
-            'url' => "/adelantos/estadisticas",
+            'name' => "Reportes",
+            'url' => "/adelantos/reportes",
             'icon' => "",
             'menu_id' => 4,
             'active' => 1

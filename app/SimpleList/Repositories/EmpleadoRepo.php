@@ -3,6 +3,7 @@
 use SimpleList\Entities\Empleado;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\DB;
 
 class EmpleadoRepo{
 	
@@ -32,16 +33,19 @@ class EmpleadoRepo{
             $tmp = $tmp[2]."-".$tmp[1]."-".$tmp[0];
             $employes = Empleado::where('empleado.id','!=',Auth::user()->id_empleado)
                         ->join('asistencia','id_empleado','=','empleado.id')
-                        ->where('centro_costo','=',$idCenter)
-                        ->where('asistencia.created_at','LIKE',$tmp)
+                        ->where('empleado.centro_costo','=',$idCenter)
+                        ->where(DB::raw('DATE(asistencia.created_at)'),'=',$tmp)
                         ->select("empleado.ape_paterno as paterno","empleado.ape_materno as materno","empleado.nombre as firstname","empleado.id as rut",'empleado.active as status','asistencia.comentario as comentario','asistencia.active as presencia')
                         ->get();
+            $route = "update";
         }
         else{
             $employes = Empleado::where('id','!=',Auth::user()->id_empleado)
                         ->where('centro_costo','=',$idCenter)
                         ->select("empleado.ape_paterno as paterno","empleado.ape_materno as materno","empleado.nombre as firstname","empleado.id as rut",'empleado.active as status')
                         ->get();
+            $route = "save";
+            $tmp = "";
         }
         $list = "";
         $values = "[";
@@ -50,18 +54,23 @@ class EmpleadoRepo{
         foreach ($employes as $employ){
             $estado = ($employ->status == 1) ? 'Activo' : 'Desactivado';
             $values .= ($vuelta > 0) ? "," : "";
-            $values .= "'".str_replace("-","SL",$employ->rut)."ST1'";
-            if(!is_null($fecha))
-                $asistencia = ($employ->presencia == 1) ? "checked" : '';
-            else
+            if(!is_null($fecha)){
+                $values .= ($employ->presencia == 1) ? "'".str_replace("-","SL",$employ->rut)."ST1'" : "'".str_replace("-","SL",$employ->rut)."ST0'";
+                $asistencia = ($employ->presencia == 1) ? " checked='checked' " : '';
+            }
+            else{
+                $values .= "'".str_replace("-","SL",$employ->rut)."ST1'";
                 $asistencia = "";
+            }
+            $checked = (!is_null($fecha)) ? $asistencia : " checked='checked' ";
+            $commentary = (!is_null($fecha)) ? $employ->comentario : "";
 
             $list .= "<tr>";
             $list .= "<td>".$employ->rut."</td>";
             $list .= "<td>".ucwords($employ->firstname)."</td>";
             $list .= "<td>".ucwords($employ->paterno)." ".ucwords($employ->materno)."</td>";
             $list .= "<td>".$estado."</td>";
-            $list .= "<td><input type='checkbox' class='flat-orange' name='employedIdOperating' checked='".(!is_null($fecha)) ? $asistencia : 'checked'."' value='".str_replace("-","SL",$employ->rut)."'><span class='fa fa-comment minibtn-comment' data-comment='".(!is_null($fecha)) ? $employ->comentario : "" ."' id='".str_replace("-","SL",$employ->rut)."'></span></td>";
+            $list .= "<td><input type='checkbox' class='flat-orange' name='employedIdOperating' ".$checked." value='".str_replace("-","SL",$employ->rut)."'><span class='fa fa-comment minibtn-comment' data-comment='".$commentary."' id='".str_replace("-","SL",$employ->rut)."'></span></td>";
             $list .= "</tr>";
 
             $vuelta++;
@@ -74,7 +83,9 @@ class EmpleadoRepo{
         return View::make('asistencia.listEmployes',array(
                     'employes' => $list,
                     'centerName' => $centro,
-                    'values' => $values
+                    'values' => $values,
+                    'action' => $route,
+                    'fecha' => $fecha
                 ));
     }
 

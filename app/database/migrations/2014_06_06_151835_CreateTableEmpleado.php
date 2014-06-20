@@ -19,7 +19,7 @@ class CreateTableEmpleado extends Migration {
 			$tabla->integer('fono_movil');
 			$tabla->string('prevision');
 			$tabla->string('img_perfil');
-			//Campos que sirver de relaciones
+			//Campos que sirven de relaciones
 			$tabla->integer('cargo');
 			$tabla->integer('centro_costo');
 			$tabla->boolean('active');

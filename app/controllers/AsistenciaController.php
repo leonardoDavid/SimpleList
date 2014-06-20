@@ -55,8 +55,9 @@ class AsistenciaController extends BaseController {
             return Redirect::to('/asistencia/tomar')->with('validations-error',$mensajes);
         }
 
-        if(AsistenciaRepo::existsList(Input::get('dateList'))){
-            return AsistenciaRepo::updateList(Input::get('dateList'));
+        $fecha = (Input::get('dateList') != "") ? Input::get('dateList') : date("d/m/Y");
+        if(AsistenciaRepo::existsList($fecha)){
+            return AsistenciaRepo::updateList($fecha);
         }
         else{
             return AsistenciaRepo::newList();
@@ -66,6 +67,20 @@ class AsistenciaController extends BaseController {
     public function saveAssistance(){
         if(Request::ajax()){
             $response = AsistenciaManager::save();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en el tipo de solicitud"
+            );
+        }
+
+        return json_encode($response);
+    }
+
+    public function updateAssistance(){
+        if(Request::ajax()){
+            $response = AsistenciaManager::update();
         }
         else{
             $response = array(

@@ -45,6 +45,8 @@ Route::group(array('before' => 'auth'), function(){
 	Route::get('/asistencia/tomar', 'AsistenciaController@getTake');
 	Route::post('/asistencia/tomar', 'AsistenciaController@getListAssistance');
 	Route::post('/asistencia/tomar/save', 'AsistenciaController@saveAssistance');
+	Route::post('/asistencia/tomar/update', 'AsistenciaController@updateAssistance');
+	Route::get('/asistencia/reportes', 'ReportesController@showFilterAssistance');
 
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');
@@ -68,3 +70,22 @@ Route::when('asistencia','access:/asistencia');
 Route::when('asistencia/*','access:/asistencia');
 Route::when('adelantos','access:/adelantos');
 Route::when('adelantos/*','access:/adelantos');
+
+/*
+|--------------------------------------------------------------------------
+| Listener
+|--------------------------------------------------------------------------
+|
+| Esta seccion se encuentra a la escucha de eventos en la aplicacion, como 
+| por ejemplo imprimir cada query en ejecucion.
+| Solo se ejecutan si el debbuger se encuentra en true
+|
+*/
+$debbuger = false;
+if($debbuger){
+	Event::listen('illuminate.query', function($query){
+		echo "<pre>";
+	    var_dump($query);
+	    echo "</pre>";
+	});
+}

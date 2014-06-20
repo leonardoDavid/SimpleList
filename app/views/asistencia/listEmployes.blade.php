@@ -56,9 +56,14 @@
 
 	$('#save').click(function(event){
 		$.ajax({
-			url: '/asistencia/tomar/save',
+			url: '/asistencia/tomar/{{ $action }}',
 			type: 'post',
-			data: { 'values' : getValues() },//{ values : values.toString() },
+			data: { 
+                'values' : getValues()
+                @if($action == "update")
+                    ,'fecha' : '{{ $fecha }}'
+                @endif
+            },
 			beforeSend : function(){
 				$('#over-list').fadeIn();
 			},
