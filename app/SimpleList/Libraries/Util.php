@@ -77,4 +77,49 @@ class Util{
             return '<li><a href="/"><i class="fa fa-dashboard active"></i> Dashboard</a></li>';
     }
 
+    public static function clearRut($rut){
+        $rutEmployed = str_replace(".", "", $rut);
+        $rutEmployed = str_replace(",", "", $rutEmployed);
+        $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
+        $rutEmployed .= "-";
+        $rutEmployed .= substr($rut, -1);
+
+        return $rutEmployed;
+    }
+
+    public static function getRangeDate($fecha){
+        if(!empty($fecha)){
+            $tmp = explode("-", $fecha);
+            if(count($tmp) == 2){
+                $initDate = trim($tmp[0]);
+                $lastDate = trim($tmp[1]);
+
+                $initDate = explode("/", $initDate);
+                $initDate = $initDate[0]."/".$initDate[1]."/".$initDate[2];
+
+                $lastDate = explode("/", $lastDate);
+                $lastDate = $lastDate[0]."/".$lastDate[1]."/".$lastDate[2];
+
+                $response = array(
+                    'init' => $initDate,
+                    'last' => $lastDate
+                );
+            }
+            else{
+                $response = array(
+                    'init' => null,
+                    'last' => null
+                );
+            }
+        }
+        else{
+            $response = array(
+                'init' => null,
+                'last' => null
+            );
+        }
+
+        return $response;
+    }
+
 }

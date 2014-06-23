@@ -34,4 +34,16 @@ class JefaturaRepo{
         ));
     }
 
+    public static function getSelectJefatura($id=null){
+        $options = "<option value='0'>Seleccione una Jefatura</option>";
+        $jefatura = Jefatura::join('empleado','jefatura.id_empleado','=','empleado.id')
+                        ->where('empleado.active','=','1')
+                        ->where('jefatura.active','=','1')->get();
+        foreach ($jefatura as $row){
+            $selected = ($row->id == $id) ? "selected" : "";
+            $options .= "<option value='".$row->id."' ".$selected.">".ucwords($row->nombre)." ".ucwords($row->ape_paterno)."</option>";
+        }
+        return $options;
+    }
+
 }

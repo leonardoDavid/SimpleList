@@ -27,7 +27,7 @@
 @section('contend')
 	<div class="row">
 		@if (Session::has('error_url'))
-			<div class="alert alert-danger alert-dismissable">
+			<div class="alert alert-danger alert-dismissable margin">
 	            <i class="fa fa-ban"></i>
 	            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
 	            <strong>Woou! </strong> {{ Session::get('error_url') }}

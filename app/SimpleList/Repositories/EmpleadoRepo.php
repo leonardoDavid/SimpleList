@@ -89,4 +89,14 @@ class EmpleadoRepo{
                 ));
     }
 
+    public static function getSelectEmployes($id=null){
+        $options = "<option value='0'>Seleccione un Empleado</option>";
+        $empleoyes = Empleado::where('active','=','1')->get();
+        foreach ($empleoyes as $row){
+            $selected = ($row->id == $id) ? "selected" : "";
+            $options .= "<option value='".$row->id."' ".$selected.">".ucwords($row->nombre)." ".ucwords($row->ape_paterno)."</option>";
+        }
+        return $options;
+    }
+
 }

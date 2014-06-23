@@ -2,6 +2,7 @@
 
 use SimpleList\Entities\Empleado;
 use SimpleList\Repositories\EmpleadoRepo;
+use SimpleList\Libraries\Util;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
 
@@ -17,11 +18,7 @@ class EmpleadoManager{
     |
     */
     public static function save(){
-        $rutEmployed = str_replace(".", "", Input::get('rut'));
-        $rutEmployed = str_replace(",", "", $rutEmployed);
-        $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
-        $rutEmployed .= "-";
-        $rutEmployed .= substr(Input::get('rut'), -1);
+        $rutEmployed = Util::clearRut(Input::get('rut'));
 
         $validation = Validator::make(
             array(
@@ -97,13 +94,7 @@ class EmpleadoManager{
         $pased = true;
         $rutsEnabled = array();
         foreach ($ruts as $employ){
-
-            $rutEmployed = str_replace(".", "", $employ);
-            $rutEmployed = str_replace(",", "", $rutEmployed);
-            $rutEmployed = str_replace("-", "", $rutEmployed);
-            $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
-            $rutEmployed .= "-";
-            $rutEmployed .= substr($employ, -1);
+            $rutEmployed = Util::clearRut($employ);
 
             $validation = Validator::make(
                 array(

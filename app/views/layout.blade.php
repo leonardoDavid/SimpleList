@@ -2,6 +2,7 @@
 <html lang="es">
     <head>
         <meta charset="UTF-8">
+        @yield('special-meta')
         <title>@yield('title','SimpeList')</title>
         <meta content='width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no' name='viewport'>
         <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css" />

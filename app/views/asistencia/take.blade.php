@@ -92,7 +92,7 @@
                     <p id="list-error"></p>                       
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                    <button class="btn btn-default" data-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -106,7 +106,7 @@
                     <h4 class="modal-title">SimpleList</h4>
                 </div>
                 <div class="modal-body">
-                	<textarea id="commet-text" class="comment-text" placeholder="Ingrese un comentario para el empleado"></textarea>
+                	<textarea id="commet-text" class="form-control comment-text" placeholder="Ingrese un comentario para el empleado"></textarea>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-danger" data-dismiss="modal">Cancelar</button>

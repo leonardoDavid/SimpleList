@@ -1,14 +1,14 @@
 .text-right{
     text-align: right;
 }
- /*
-  |--------------------------------------------------------------------------
-  | Seccion de Administracion 
-  |--------------------------------------------------------------------------
-  |
-  | Estilos dedicados a dar detalle en la seccion de administracion de 
-  | empleados y centros de costos.
-  |
+/*
+|--------------------------------------------------------------------------
+| Seccion de Administracion 
+|--------------------------------------------------------------------------
+|
+| Estilos dedicados a dar detalle en la seccion de administracion de 
+| empleados y centros de costos.
+|
 */
 .afterAdd{
 	position: absolute;
@@ -26,16 +26,20 @@
     float: right;
     cursor: pointer;
 }
+.comment-text{
+    height: 8em !important;
+    resize: none;
+}
 
 
- /*
-  |--------------------------------------------------------------------------
-  | Loader Block
-  |--------------------------------------------------------------------------
-  |
-  | Estilos dedicados al cuadro de carga, contine el container del cuadro,
-  | el texto y el icono de carga.
-  |
+/*
+|--------------------------------------------------------------------------
+| Loader Block
+|--------------------------------------------------------------------------
+|
+| Estilos dedicados al cuadro de carga, contine el container del cuadro,
+| el texto y el icono de carga.
+|
 */
 .overlay-loading{
 	position: fixed;
