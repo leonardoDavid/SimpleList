@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('title')
-	SimpleList | Asistencia
+	SimpleList | Reportería de Asistencia
 @stop
 
 @section('special-meta')

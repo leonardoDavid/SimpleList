@@ -34,7 +34,7 @@ return array(
 	"digits"               => "The :attribute must be :digits digits.",
 	"digits_between"       => "The :attribute must be between :min and :max digits.",
 	"email"                => "El campo :attribute debe ser un email válido.",
-	"exists"               => "The selected :attribute is invalid.",
+	"exists"               => "El campo :attribute no se encuentra en el sistema.",
 	"image"                => "The :attribute must be an image.",
 	"in"                   => "The selected :attribute is invalid.",
 	"integer"              => "The :attribute must be an integer.",
@@ -88,7 +88,7 @@ return array(
 		),
 	),
 	'before_today' => "La fecha es superior al día de hoy",
-	'before_init_date' => "La fecha es inferior al primer registro en el sistema",
+	'after_init_date' => "La fecha es inferior al primer registro en el sistema",
 
 	/*
 	|--------------------------------------------------------------------------

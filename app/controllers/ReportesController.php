@@ -51,7 +51,7 @@ class ReportesController extends BaseController {
                     'centro' => 'exists:centro_costo,id',
                     'empleado' => 'exists:empleado,id',
                     'jefatura' => 'exists:jefatura,id',
-                    'initDate' => 'before_init_date',
+                    'initDate' => 'after_init_date',
                     'lastDate' => 'before_today',
                     'hasComments' => 'in:1,2'
                 )

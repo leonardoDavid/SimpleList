@@ -14,7 +14,7 @@ Validator::extend('before_today', function($attribute, $value, $parameters){
 		return false;
 });
 
-Validator::extend('before_init_date', function($attribute, $value, $parameters){
+Validator::extend('after_init_date', function($attribute, $value, $parameters){
 	$fecha = explode('/',$value);
 
 	if( (is_array($fecha) && count($fecha) == 3) && ( is_numeric($fecha[0]) && is_numeric($fecha[1]) && is_numeric($fecha[2])) ){
