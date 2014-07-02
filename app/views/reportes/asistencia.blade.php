@@ -100,7 +100,7 @@
             </div>
         </div>
 
-        <!-- Filtro de Vsita -->
+        <!-- Filtro de Vista -->
 	    <div class="col-xs-12 col-md-12">
             <div class="box">
                 <div class="box-header">
@@ -108,7 +108,7 @@
                         <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
                     </div>
                     <i class="fa fa-filter"></i>
-                    <h3 class="box-title">Filtros de Contenido</h3>
+                    <h3 class="box-title">Vista Rápida</h3>
                 </div>
                 <div class="box-body">
 					<p>
@@ -154,7 +154,9 @@
             checkboxClass: 'icheckbox_flat-orange',
             radioClass: 'iradio_flat-orange'
         });
-        $('#rangeReport').daterangepicker();
+        $('#rangeReport').daterangepicker({ 
+            format: 'DD/MM/YYYY'
+        });
     });
 
     $('#filterReport').click(function(event){
@@ -200,5 +202,4 @@
         };
         return response;
     }
-    
 @stop

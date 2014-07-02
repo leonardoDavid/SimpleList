@@ -89,6 +89,7 @@ return array(
 	),
 	'before_today' => "La fecha es superior al día de hoy",
 	'after_init_date' => "La fecha es inferior al primer registro en el sistema",
+	'before_last_date' => "La fecha es superior al último registro en el sistema",
 
 	/*
 	|--------------------------------------------------------------------------

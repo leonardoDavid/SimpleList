@@ -31,30 +31,16 @@ class ReportesController extends BaseController {
         ));
     }
 
-    public function exportCSVFile(){
+    public function generateCSVReportAssistance(){
         if(Request::ajax()){
             $values = Input::get('values');
             $empleadoRUT = Util::clearRut($values['empleado']);
             $jefaturaRUT = Util::clearRut($values['jefatura']);
             $fecha = Util::getRangeDate($values['range']);
+            $rules = $this->getRulesValidator($values,$empleadoRUT,$jefaturaRUT,$fecha);
 
             $validations = Validator::make(
-                array(
-                    'centro' => $values['centro'],
-                    'empleado' => $empleadoRUT,
-                    'jefatura' => $jefaturaRUT,
-                    'initDate' => $fecha['init'],
-                    'lastDate' => $fecha['last'],
-                    'hasComments' => $values['ifComments']
-                ),
-                array(
-                    'centro' => 'exists:centro_costo,id',
-                    'empleado' => 'exists:empleado,id',
-                    'jefatura' => 'exists:jefatura,id',
-                    'initDate' => 'after_init_date',
-                    'lastDate' => 'before_today',
-                    'hasComments' => 'in:1,2'
-                )
+                $rules['columns'],$rules['rules']
             );
 
             if($validations->fails()){
@@ -71,11 +57,11 @@ class ReportesController extends BaseController {
                 );
             }
             else{
+                $dataReport = ReporteRepo::asistencia($filtros);
                 $response = array(
                     'status' => true
                 );
             }
-
         }
         else{
             $response = array(
@@ -85,6 +71,39 @@ class ReportesController extends BaseController {
         }
 
         return json_encode($response);
+    }
+
+    private function getRulesValidator($values,$empleadoRUT,$jefaturaRUT,$fecha){
+        $columns = array();
+        $rules = array();
+
+        if(!empty($values['centro']) && $values['centro'] != 0 ){
+            $columns['centro'] = $values['centro'];
+            $rules['centro'] = 'exists:centro_costo,id';
+        }        
+        if(!empty($empleadoRUT) && $empleadoRUT != 0 ){
+            $columns['empleado'] = $empleadoRUT;
+            $rules['empleado'] = 'exists:empleado,id';
+        }
+        if(!empty($jefaturaRUT) && $jefaturaRUT != 0 ){
+            $columns['jefatura'] = $jefaturaRUT;
+            $rules['jefatura'] = 'exists:jefatura,id_empleado';
+        }
+        if(!empty($fecha['init'])){
+            $columns['initDate'] = $fecha['init'];
+            $rules['initDate'] = 'after_init_date';
+        }
+        if(!empty($fecha['last'])){
+            $columns['lastDate'] = $fecha['last'];
+            $rules['lastDate'] = 'before_last_date';
+        }
+        $columns['hasComments'] = $values['ifComments'];
+        $rules['hasComments'] = 'in:0,1';
+
+        return array(
+            'columns' => $columns,
+            'rules' => $rules
+        );
     }
 
 }
