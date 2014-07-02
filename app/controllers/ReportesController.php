@@ -4,6 +4,7 @@ use SimpleList\Libraries\Util;
 use SimpleList\Repositories\JefaturaRepo;
 use SimpleList\Repositories\EmpleadoRepo;
 use SimpleList\Repositories\CentroRepo;
+use SimpleList\Repositories\ReporteRepo;
 
 class ReportesController extends BaseController {
     /*
@@ -57,7 +58,11 @@ class ReportesController extends BaseController {
                 );
             }
             else{
-                $dataReport = ReporteRepo::asistencia($filtros);
+                $filters = $this->generateFiltersToCSV($values,$empleadoRUT,$jefaturaRUT,$fecha);
+                $dataReport = ReporteRepo::asistencia($filters);
+                //Generar Tabla CSV en base a los filtrosy exportar en archivo
+                //dd($dataReport);
+
                 $response = array(
                     'status' => true
                 );
@@ -104,6 +109,28 @@ class ReportesController extends BaseController {
             'columns' => $columns,
             'rules' => $rules
         );
+    }
+
+    private function generateFiltersToCSV($values,$empleadoRUT,$jefaturaRUT,$fecha){
+        $filters = array();
+
+        if(!empty($values['centro']) && $values['centro'] != 0 ){
+            $filters['center'] = $values['centro'];
+        }        
+        if(!empty($empleadoRUT) && $empleadoRUT != 0 ){
+            $filters['employ'] = $empleadoRUT;
+        }
+        if(!empty($jefaturaRUT) && $jefaturaRUT != 0 ){
+            $filters['boss'] = $jefaturaRUT;
+        }
+        if( !empty($fecha['init']) && !empty($fecha['last']) ){
+            $tmp = explode('/',$fecha['init']);
+            $filters['init'] = $tmp[2]."-".$tmp[1]."-".$tmp[0];
+            $tmp = explode('/',$fecha['last']);
+            $filters['last'] = $tmp[2]."-".$tmp[1]."-".$tmp[0];
+        }
+
+        return $filters;
     }
 
 }
