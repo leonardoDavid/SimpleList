@@ -60,12 +60,22 @@ class ReportesController extends BaseController {
             else{
                 $filters = $this->generateFiltersToCSV($values,$empleadoRUT,$jefaturaRUT,$fecha);
                 $dataReport = ReporteRepo::asistencia($filters);
-                //Generar Tabla CSV en base a los filtrosy exportar en archivo
-                //dd($dataReport);
-
-                $response = array(
-                    'status' => true
-                );
+                
+                $report = $this->generateFileCSV($dataReport,$filters);
+                if ($report['status']) {
+                    $response = array(
+                        'status' => true,
+                        'download' => $report['routeDownload']
+                    );
+                }
+                else{
+                    $response = array(
+                        'status' => false,
+                        'motivo' => $report['motivo'],
+                        'mensajes' => "",
+                        'ex' => $report['exception']
+                    );
+                }
             }
         }
         else{
@@ -76,6 +86,28 @@ class ReportesController extends BaseController {
         }
 
         return json_encode($response);
+    }
+
+    public function getFileReportCSV($hashName){
+        $fileName = Crypt::decrypt($hashName);
+        $fileLocation = app_path().'/SimpleList/Files/Reports/'.$fileName.".csv";
+        if(file_exists($fileLocation)){
+            $resource = finfo_open(FILEINFO_MIME_TYPE);
+            $type = finfo_file($resource , $fileLocation);
+            finfo_close($resource);
+
+            $partes = explode('.', $fileLocation);
+            $total = count($partes);
+            $ext = ($total > 0) ? $partes[$total -1] : 'txt';
+
+            $headers = array(
+                'Content-Type' => $type,
+                'Content-Disposition' => 'attachment; filename=reporte.'.$ext,
+            );
+            return Response::make(readfile($fileLocation), 200, $headers);
+        }
+        else
+            return App::abort(404);
     }
 
     private function getRulesValidator($values,$empleadoRUT,$jefaturaRUT,$fecha){
@@ -131,6 +163,67 @@ class ReportesController extends BaseController {
         }
 
         return $filters;
+    }
+
+    private function generateFileCSV($model,$filters){
+        $response = array();
+        $headersCSV = array();
+
+        array_push($headersCSV, 'RUT');
+        array_push($headersCSV, 'Nombre');
+        array_push($headersCSV, 'Apellido Paterno');
+        array_push($headersCSV, 'Apellido Materno');
+        array_push($headersCSV, 'Cargo');
+        array_push($headersCSV, 'Valor Día');
+        array_push($headersCSV, 'Presente');
+        array_push($headersCSV, 'Fecha de Lista');
+
+        if(array_key_exists('center', $filters))
+            array_push($headersCSV, 'Centro');
+        if(array_key_exists('boss', $filters))
+            array_push($headersCSV, 'Jefatura');
+
+        try{
+            $fileName = date('d-m-Y_H:i:s')."_By".Auth::user()->username;
+            $fileLocation = app_path().'/SimpleList/Files/Reports/'.$fileName.".csv";
+            $file = fopen( $fileLocation, 'w');
+
+            fputcsv($file, $headersCSV);
+            foreach ($model as $row){
+                $tmp = array();
+
+                array_push($tmp, $row->rut_empleado);
+                array_push($tmp, $row->nombre_empleado);
+                array_push($tmp, $row->ape_paterno);
+                array_push($tmp, $row->ape_materno);
+                array_push($tmp, $row->cargo);
+                array_push($tmp, $row->valor_dia);
+                array_push($tmp, $row->asistio);
+                array_push($tmp, $row->tomada);
+
+                if(array_key_exists('center', $filters))
+                    array_push($tmp, $row->centro_costo);
+                if(array_key_exists('boss', $filters))
+                    array_push($tmp, $row->rut_jefatura);
+
+                fputcsv($file, $tmp);
+            }
+            fclose($file);
+
+            $response = array(
+                'status' => true,
+                'routeDownload' => '/asistencia/files/'.Crypt::encrypt($fileName)
+            );
+
+        }catch(Exception $e){
+            $response = array(
+                'status' => false,
+                'motivo' => "Error al tratar de Generar el Archivo",
+                'exception' => $e->getMessage()
+            );
+        }
+
+        return $response;
     }
 
 }

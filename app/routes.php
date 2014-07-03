@@ -48,6 +48,7 @@ Route::group(array('before' => 'auth'), function(){
 	Route::post('/asistencia/tomar/update', 'AsistenciaController@updateAssistance');
 	Route::get('/asistencia/reportes', 'ReportesController@showFilterAssistance');
 	Route::post('/asistencia/reportes/generatecsv', 'ReportesController@generateCSVReportAssistance');
+	Route::get('/asistencia/files/{hashName}', 'ReportesController@getFileReportCSV');
 
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');

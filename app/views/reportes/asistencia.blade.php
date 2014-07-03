@@ -173,6 +173,7 @@
                 var obj = JSON.parse(response);
                 if(obj['status']){
                     $(".afterAdd").fadeIn();
+                    window.location = obj['download'];
                 }
                 else{
                     $('#msj-error').text(obj['motivo']);
@@ -187,6 +188,16 @@
                 $('#error-server').modal();
             }
         });
+    });
+
+    $('#takeOtherReport').click(function(event) {
+        $('#centro option:eq(0)').prop('selected', true);
+        $('#empleado option:eq(0)').prop('selected', true);
+        $('#jefatura option:eq(0)').prop('selected', true);
+        $('#range').val("");
+        $('#ifComments').iCheck('uncheck');
+        $(".afterAdd").fadeOut();
+        $('#over-csv').fadeOut();
     });
 
     function getValues(){
