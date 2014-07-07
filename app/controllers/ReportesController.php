@@ -49,10 +49,11 @@ class ReportesController extends BaseController {
     public function generateCSVReportAssistance(){
         if(Request::ajax()){
             $values = Input::get('values');
-            $empleadoRUT = Util::clearRut($values['empleado']);
-            $jefaturaRUT = Util::clearRut($values['jefatura']);
-            $fecha = Util::getRangeDate($values['range']);
-            $rules = $this->getRulesValidator($values,$empleadoRUT,$jefaturaRUT,$fecha);
+            $values['empleado'] = Util::clearRut($values['empleado']);
+            $values['jefatura'] = Util::clearRut($values['jefatura']);
+            $values['range'] = Util::getRangeDate($values['range']);
+            $values['model'] = 'asistencia';
+            $rules = $this->getRulesValidator($values);
 
             $validations = Validator::make(
                 $rules['columns'],$rules['rules']
@@ -72,8 +73,64 @@ class ReportesController extends BaseController {
                 );
             }
             else{
-                $filters = $this->generateFiltersToCSV($values,$empleadoRUT,$jefaturaRUT,$fecha);
+                $filters = $this->generateFiltersToCSV($values);
                 $dataReport = ReporteRepo::asistencia($filters);
+                
+                $report = $this->generateFileCSV($dataReport,$filters);
+                if ($report['status']) {
+                    $response = array(
+                        'status' => true,
+                        'download' => $report['routeDownload']
+                    );
+                }
+                else{
+                    $response = array(
+                        'status' => false,
+                        'motivo' => $report['motivo'],
+                        'mensajes' => "",
+                        'ex' => $report['exception']
+                    );
+                }
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => 'Error en el tipo de solicitud de datos'
+            );
+        }
+
+        return json_encode($response);
+    }
+
+    public function generateCSVReportPay(){
+        if(Request::ajax()){
+            $values = Input::get('values');
+            $values['empleado'] = Util::clearRut($values['empleado']);
+            $values['range'] = Util::getRangeDate($values['range']);
+            $values['model'] = 'adelanto';
+            $rules = $this->getRulesValidator($values);
+
+            $validations = Validator::make(
+                $rules['columns'],$rules['rules']
+            );
+
+            if($validations->fails()){
+                $errores = $validations->messages()->all();
+                $mensajes = "<ul>";
+                foreach ($errores as $row){
+                    $mensajes .= "<li>".$row."</li>";
+                }
+                $mensajes .= "</ul>";
+                $response = array(
+                    'status' => false,
+                    'motivo' => 'Existen errores en los filtros entregados para realizar el reporte:',
+                    'mensajes' => $mensajes
+                );
+            }
+            else{
+                $filters = $this->generateFiltersToCSV($values);
+                $dataReport = ReporteRepo::adelanto($filters);
                 
                 $report = $this->generateFileCSV($dataReport,$filters);
                 if ($report['status']) {
@@ -124,32 +181,32 @@ class ReportesController extends BaseController {
             return App::abort(404);
     }
 
-    private function getRulesValidator($values,$empleadoRUT,$jefaturaRUT,$fecha){
+    private function getRulesValidator($values){
         $columns = array();
         $rules = array();
 
-        if(!empty($values['centro']) && $values['centro'] != 0 ){
+        if(array_key_exists('centro', $values) && !empty($values['centro']) && $values['centro'] != 0 ){
             $columns['centro'] = $values['centro'];
             $rules['centro'] = 'exists:centro_costo,id';
         }        
-        if(!empty($empleadoRUT) && $empleadoRUT != 0 ){
-            $columns['empleado'] = $empleadoRUT;
+        if(array_key_exists('empleado', $values) && !empty($values['empleado']) && $values['empleado'] != 0 ){
+            $columns['empleado'] = $values['empleado'];
             $rules['empleado'] = 'exists:empleado,id';
         }
-        if(!empty($jefaturaRUT) && $jefaturaRUT != 0 ){
-            $columns['jefatura'] = $jefaturaRUT;
+        if(array_key_exists('jefatura', $values) && !empty($values['jefatura']) && $values['jefatura'] != 0 ){
+            $columns['jefatura'] = $values['jefatura'];
             $rules['jefatura'] = 'exists:jefatura,id_empleado';
         }
-        if(!empty($fecha['init'])){
-            $columns['initDate'] = $fecha['init'];
-            $rules['initDate'] = 'after_init_date';
+        if(array_key_exists('range', $values) && !empty($values['range']) ){
+            $columns['initDate'] = $values['range']['init'];
+            $columns['lastDate'] = $values['range']['last'];
+            $rules['initDate'] = 'after_init_date:'.$values['model'];
+            $rules['lastDate'] = 'before_last_date:'.$values['model'];
         }
-        if(!empty($fecha['last'])){
-            $columns['lastDate'] = $fecha['last'];
-            $rules['lastDate'] = 'before_last_date';
+        if(array_key_exists('ifComments', $values)){
+            $columns['hasComments'] = $values['ifComments'];
+            $rules['hasComments'] = 'in:0,1';
         }
-        $columns['hasComments'] = $values['ifComments'];
-        $rules['hasComments'] = 'in:0,1';
 
         return array(
             'columns' => $columns,
@@ -157,25 +214,26 @@ class ReportesController extends BaseController {
         );
     }
 
-    private function generateFiltersToCSV($values,$empleadoRUT,$jefaturaRUT,$fecha){
+    private function generateFiltersToCSV($values){
         $filters = array();
 
-        if(!empty($values['centro']) && $values['centro'] != 0 ){
+        if(array_key_exists('centro', $values) && !empty($values['centro']) && $values['centro'] != 0 ){
             $filters['center'] = $values['centro'];
         }        
-        if(!empty($empleadoRUT) && $empleadoRUT != 0 ){
+        if(array_key_exists('empleado', $values) && !empty($values['empleado']) && $values['empleado'] != 0 ){
             $filters['employ'] = $empleadoRUT;
         }
-        if(!empty($jefaturaRUT) && $jefaturaRUT != 0 ){
+        if(array_key_exists('jefatura', $values) && !empty($values['jefatura']) && $values['jefatura'] != 0 ){
             $filters['boss'] = $jefaturaRUT;
         }
-        if( !empty($fecha['init']) && !empty($fecha['last']) ){
-            $tmp = explode('/',$fecha['init']);
-            $filters['init'] = $tmp[2]."-".$tmp[1]."-".$tmp[0];
-            $tmp = explode('/',$fecha['last']);
-            $filters['last'] = $tmp[2]."-".$tmp[1]."-".$tmp[0];
+        if(array_key_exists('range', $values) && !empty($values['range']) ){
+            $tmp = explode('/',$values['range']['init']);
+            $filters['init'] = (is_array($tmp) && count($tmp) == 3) ? $tmp[2]."-".$tmp[1]."-".$tmp[0] : null;
+            $tmp = explode('/',$values['range']['last']);
+            $filters['last'] = (is_array($tmp) && count($tmp) == 3) ? $tmp[2]."-".$tmp[1]."-".$tmp[0] : null;
         }
-        $filters['hasComments'] = $values['ifComments'];
+        if(array_key_exists('ifComments', $values))
+            $filters['hasComments'] = $values['ifComments'];
 
         return $filters;
     }
@@ -190,57 +248,78 @@ class ReportesController extends BaseController {
         array_push($headersCSV, 'Apellido Materno');
         array_push($headersCSV, 'Cargo');
         array_push($headersCSV, 'Valor Día');
-        array_push($headersCSV, 'Presente');
-        array_push($headersCSV, 'Fecha de Lista');
+        if(count($model) > 0 && $filters['model'] == "adelanto"){
+            array_push($headersCSV, 'Monto');
+            array_push($headersCSV, 'Fecha de Adelanto');
+        }
+        if(count($model) > 0 && $filters['model'] == "asistencia"){
+            array_push($headersCSV, 'Presente');
+            array_push($headersCSV, 'Fecha de Lista');
+        }
 
         if(array_key_exists('center', $filters))
             array_push($headersCSV, 'Centro');
         if(array_key_exists('boss', $filters))
             array_push($headersCSV, 'Jefatura');
-        if($filters['hasComments'] == 1 )
+        if( array_key_exists('hasComments', $filters) && $filters['hasComments'] == 1 )
             array_push($headersCSV, 'Comentario');
 
-        try{
-            $fileName = date('d-m-Y_H:i:s')."_By".Auth::user()->username;
-            $fileLocation = app_path().'/SimpleList/Files/Reports/'.$fileName.".csv";
-            $file = fopen( $fileLocation, 'w');
+        if(count($model) > 0){
+            try{
+                $fileName = date('d-m-Y_H:i:s')."_By-".Auth::user()->username."_".$filters['model'];
+                $fileLocation = app_path().'/SimpleList/Files/Reports/'.$fileName.".csv";
+                $file = fopen( $fileLocation, 'w');
 
-            fputcsv($file, $headersCSV);
-            foreach ($model as $row){
-                $tmp = array();
+                fputcsv($file, $headersCSV);
+                foreach ($model as $row){
+                    $tmp = array();
 
-                array_push($tmp, $row->rut_empleado);
-                array_push($tmp, $row->nombre_empleado);
-                array_push($tmp, $row->ape_paterno);
-                array_push($tmp, $row->ape_materno);
-                array_push($tmp, $row->cargo);
-                array_push($tmp, $row->valor_dia);
-                array_push($tmp, $row->asistio);
-                array_push($tmp, $row->tomada);
+                    array_push($tmp, $row->rut_empleado);
+                    array_push($tmp, $row->nombre_empleado);
+                    array_push($tmp, $row->ape_paterno);
+                    array_push($tmp, $row->ape_materno);
+                    array_push($tmp, $row->cargo);
+                    array_push($tmp, $row->valor_dia);
+                    if(count($model) > 0 && $filters['model'] == "asistencia"){
+                        array_push($tmp, $row->asistio);
+                        array_push($tmp, $row->tomada);
+                    }
+                    if(count($model) > 0 && $filters['model'] == "adelanto"){
+                        array_push($tmp, $row->monto);
+                        array_push($tmp, $row->dado);
+                    }
 
-                if(array_key_exists('center', $filters))
-                    array_push($tmp, $row->centro_costo);
-                if(array_key_exists('boss', $filters))
-                    array_push($tmp, $row->rut_jefatura);
-                if($filters['hasComments'] == 1 )
-                    array_push($tmp, $row->comentario);
+                    if(array_key_exists('center', $filters))
+                        array_push($tmp, $row->centro_costo);
+                    if(array_key_exists('boss', $filters))
+                        array_push($tmp, $row->rut_jefatura);
+                    if( array_key_exists('hasComments', $filters) && $filters['hasComments'] == 1 )
+                        array_push($tmp, $row->comentario);
 
-                fputcsv($file, $tmp);
+                    fputcsv($file, $tmp);
+                }
+                fclose($file);
+
+                $route = ($filters['model'] == "adelanto") ? "adelantos" : $filters['model'];
+                $response = array(
+                    'status' => true,
+                    'routeDownload' => '/'.$route.'/files/'.Crypt::encrypt($fileName)
+                );
+
+            }catch(Exception $e){
+                $response = array(
+                    'status' => false,
+                    'motivo' => "Error al tratar de Generar el Archivo",
+                    'exception' => $e->getMessage()
+                );
             }
-            fclose($file);
-
-            $response = array(
-                'status' => true,
-                'routeDownload' => '/asistencia/files/'.Crypt::encrypt($fileName)
-            );
-
-        }catch(Exception $e){
+        }
+        else
             $response = array(
                 'status' => false,
-                'motivo' => "Error al tratar de Generar el Archivo",
-                'exception' => $e->getMessage()
+                'motivo' => "No existen registros asociados",
+                'exception' => 'No Data Found'
             );
-        }
 
         return $response;
     }

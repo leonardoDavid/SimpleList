@@ -27,7 +27,7 @@ class SiteController extends BaseController{
 			'menu' => Util::getMenu($user['name'],$user['img']),
 			'user' => JefaturaRepo::getUserNotification($user),
 			'pays' => $fastInfo['pays'],
-			'porcent' => $fastInfo['porcent'],
+			'dayList' => $fastInfo['dayList'],
 			'employed' => $fastInfo['employed'],
 			'centers' => $fastInfo['centers'],
 			'page' => "This is a content"
@@ -35,14 +35,11 @@ class SiteController extends BaseController{
 	}
 
 	private function _getFastInfo(){
-		$centers = CentroRepo::count();
-		$employes = EmpleadoRepo::count();
-		$pays = AdelantoRepo::sum();
 		return array(
-			'pays' => $pays,
-			'porcent' => 1,
-			'employed' => $employes,
-			'centers' => $centers
+			'pays' => AdelantoRepo::sum(),
+			'dayList' => Util::getLastDayAssitance(),
+			'employed' => EmpleadoRepo::count(),
+			'centers' => CentroRepo::count()
 		);
 	}
 

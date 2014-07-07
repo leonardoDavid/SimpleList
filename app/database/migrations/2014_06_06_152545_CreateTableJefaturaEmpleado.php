@@ -12,8 +12,8 @@ class CreateTableJefaturaEmpleado extends Migration {
 	public function up(){
 		Schema::create('jefatura_empleado',function($tabla){
 			$tabla->increments('id')->unique();
-			$tabla->integer('id_jefatura');
-			$tabla->integer('id_empleado');
+			$tabla->string('id_jefatura',10);
+			$tabla->string('id_empleado',10);
 			$tabla->timestamps();
 		});
 	}

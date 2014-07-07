@@ -15,10 +15,14 @@ class CreateTableEmpleado extends Migration {
 			$tabla->string('ape_paterno',200);
 			$tabla->string('ape_materno',200)->nullable();
 			$tabla->text('direccion');
-			$tabla->integer('fono_fijo')->nullable();
-			$tabla->integer('fono_movil');
+			$tabla->integer('fono_fijo')->nullable()->unsigned();
+			$tabla->integer('fono_movil')->unsigned();
 			$tabla->string('prevision');
+			$tabla->string('afp');
 			$tabla->string('img_perfil');
+			$tabla->enum('tipo_contrato', array('Plazo Fijo', 'Por Hora', 'Indefinido'));
+			$tabla->timestamp('ingreso_contrato')->default('0000-00-00 00:00:00');
+			$tabla->timestamp('vencimiento_contrato')->default('0000-00-00 00:00:00');
 			//Campos que sirven de relaciones
 			$tabla->integer('cargo');
 			$tabla->integer('centro_costo');

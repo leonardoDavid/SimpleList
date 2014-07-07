@@ -137,10 +137,6 @@
             }
         });
         $('*[data-autohide="1"]').hide();
-        $('input[type="checkbox"].flat-orange, input[type="radio"].flat-orange').iCheck({
-            checkboxClass: 'icheckbox_flat-orange',
-            radioClass: 'iradio_flat-orange'
-        });
         $('#rangeReport').daterangepicker({ 
             format: 'DD/MM/YYYY'
         });
@@ -148,7 +144,7 @@
 
     $('#filterReport').click(function(event){
         $.ajax({
-            url: '/asistencia/reportes/generatecsv',
+            url: '/adelantos/reportes/generatecsv',
             type: 'post',
             data: { 
                 'values' : getValues()
@@ -186,9 +182,6 @@
     });
 
     function getValues(){
-        var checked = 0;
-        if($('#ifComments').is(':checked'))
-            checked = 1;
         var response = {
             'centro' : $('#centro').val(),
             'empleado' : $('#empleado').val(),

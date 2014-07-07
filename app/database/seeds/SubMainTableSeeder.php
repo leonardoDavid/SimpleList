@@ -19,6 +19,13 @@ class SubMainTableSeeder extends Seeder{
 			'active' => 1
         ));
         SubMainMenu::create(array(
+            'name' => "Cargos",
+            'url' => "/admin/cargos",
+            'icon' => "",
+            'menu_id' => 2,
+            'active' => 1
+        ));
+        SubMainMenu::create(array(
             'name' => "Tomar Asistencia",
             'url' => "/asistencia/tomar",
             'icon' => "",

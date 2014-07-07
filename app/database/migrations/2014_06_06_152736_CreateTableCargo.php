@@ -12,7 +12,7 @@ class CreateTableCargo extends Migration {
 		Schema::create('cargo',function($tabla){
 			$tabla->increments('id')->unique();
 			$tabla->string('nombre',80);
-			$tabla->float('valor_dia');
+			$tabla->float('valor_dia')->unsigned();
 			$tabla->boolean('active');
 			$tabla->timestamps();
 		});

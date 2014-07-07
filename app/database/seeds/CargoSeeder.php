@@ -8,13 +8,19 @@ use SimpleList\Entities\Cargo;
 class CargoSeeder extends Seeder {
     public function run(){
     	Cargo::create(array(
-    		'nombre' => "Jefazo",
+    		'nombre' => "Maestro Pintor",
             'valor_dia' => 1.2,
             'active' => 1
         ));
 
         Cargo::create(array(
-            'nombre' => "Empleadazo",
+            'nombre' => "Jornal",
+            'valor_dia' => 0.8,
+            'active' => 1
+        ));
+
+        Cargo::create(array(
+            'nombre' => "Carpintero",
             'valor_dia' => 0.8,
             'active' => 1
         ));

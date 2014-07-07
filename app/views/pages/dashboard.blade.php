@@ -48,10 +48,10 @@
 	        <div class="small-box bg-teal">
 	            <div class="inner">
 	                <h3>
-	                    {{ $porcent }}<sup style="font-size: 20px">%</sup>
+	                    {{ $dayList }}
 	                </h3>
 	                <p>
-	                    Porcentaje Mensual
+	                    Última lista Tomada
 	                </p>
 	            </div>
 	            <div class="icon">

@@ -78,9 +78,39 @@
                         		</div>
                         	</div>
                         </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-medkit"></span></span>
+                                    <input type="text" class="form-control" data-requiered="1" id="prevision" placeholder="Previsión">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-user-md"></span></span>
+                                    <input type="text" class="form-control" data-requiered="1" id="afp" placeholder="AFP">
+                                </div>
+                            </div>
+                        </div>
                         <div class="input-group">
-                            <span class="input-group-addon"><span class="fa fa-medkit"></span></span>
-                            <input type="text" class="form-control" data-requiered="1" id="prevision" placeholder="Previsión">
+                            <span class="input-group-addon"><span class="fa fa-clipboard"></span></span>
+                            <select id="tipo" class="form-control" data-requiered="1">
+                                {{ $tipoContratos }}
+                            </select>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-thumbs-up"></span></span>
+                                    <input id="fecha-ingreso" name="fecha-ingreso" type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask data-requiered="1" placeholder="Fecha de Inicio"/>
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-thumbs-down"></span></span>
+                                    <input id="fecha-salida" name="fecha-salida" type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask data-requiered="1" placeholder="Fecha de Termino"/>
+                                </div>
+                            </div>
                         </div>
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fa fa-location-arrow"></span></span>
@@ -230,6 +260,7 @@
         });
         $('*[data-autohide="1"]').hide();
         trackSelected();
+        $("#fecha-salida,#fecha-ingreso").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
         tableDataEmployes = $("#employes").DataTable({
             "oLanguage": {
                 "sEmptyTable": "Sin Datos",
@@ -498,4 +529,7 @@
 @section('scripts')
     <script src="/js/plugins/datatables/jquery.dataTables.js"></script>
     <script src="/js/plugins/datatables/dataTables.bootstrap.js"></script>
+    <script src="/js/plugins/input-mask/jquery.inputmask.js" type="text/javascript"></script>
+    <script src="/js/plugins/input-mask/jquery.inputmask.date.extensions.js" type="text/javascript"></script>
+    <script src="/js/plugins/input-mask/jquery.inputmask.extensions.js" type="text/javascript"></script>
 @stop

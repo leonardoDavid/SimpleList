@@ -12,8 +12,8 @@ class CreateTableAdelanto extends Migration {
 	public function up(){
 		Schema::create('adelanto',function($tabla){
 			$tabla->increments('id')->unique();
-			$tabla->integer('monto');
-			$tabla->integer('id_empleado');
+			$tabla->integer('monto')->unsigned();
+			$tabla->string('id_empleado',10);
 			$tabla->boolean('active');
 			$tabla->timestamps();
 		});

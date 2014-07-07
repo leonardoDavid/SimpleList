@@ -30,6 +30,7 @@ class AdminController extends BaseController {
             'user' => JefaturaRepo::getUserNotification($user),
             'cargos' => CargoRepo::getSelectCargos(),
             'centers' => CentroRepo::getSelectCenters(),
+            'tipoContratos' => Util::getSelectAgreement(),
             'empleadosListTable' => EmpleadoRepo::getEmpleoyesWithoutMe()
         ));
     }

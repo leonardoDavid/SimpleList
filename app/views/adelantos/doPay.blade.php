@@ -140,7 +140,7 @@
 @stop
 
 @section('scripts')
-	<script src="../../js/plugins/input-mask/jquery.inputmask.js" type="text/javascript"></script>
-    <script src="../../js/plugins/input-mask/jquery.inputmask.date.extensions.js" type="text/javascript"></script>
-    <script src="../../js/plugins/input-mask/jquery.inputmask.extensions.js" type="text/javascript"></script>
+	<script src="/js/plugins/input-mask/jquery.inputmask.js" type="text/javascript"></script>
+    <script src="/js/plugins/input-mask/jquery.inputmask.date.extensions.js" type="text/javascript"></script>
+    <script src="/js/plugins/input-mask/jquery.inputmask.extensions.js" type="text/javascript"></script>
 @stop

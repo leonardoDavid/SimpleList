@@ -5,9 +5,11 @@ use SimpleList\Entities\CentroCosto;
 use SimpleList\Entities\SubMainMenu;
 use SimpleList\Entities\Cargo;
 use SimpleList\Entities\Empleado;
+use SimpleList\Entities\Asistencia;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\DB;
 
 class Util{
 
@@ -121,6 +123,30 @@ class Util{
         }
 
         return $response;
+    }
+
+    public static function getLastDayAssitance(){
+        $dia = Asistencia::select( DB::raw('DATE(asistencia.created_at)') )->orderBy('created_at','desc')->take(1)->get();
+        if(count($dia) > 0){
+            $dia = explode("-", $dia->created_at);
+            return $dia[2]."/".$dia[1]."/".$dia[0];
+        }
+        else
+            return "Sin Info";
+    }
+
+    public static function getSelectAgreement(){
+        $type = DB::select( DB::raw("SHOW COLUMNS FROM empleado WHERE Field = 'tipo_contrato'") )[0]->Type;
+        preg_match('/^enum\((.*)\)$/', $type, $matches);
+        $options = "<option value='0'>Tipo de Contrato</option>";
+        $cont = 0;
+        foreach( explode(',', $matches[1]) as $value )
+        {
+            $cont++;
+            $value = trim( $value, "'" );
+            $options .= "<option value='".$cont."'>".$value."</option>";
+        }
+        return $options;
     }
 
 }
