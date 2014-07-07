@@ -32,6 +32,20 @@ class ReportesController extends BaseController {
         ));
     }
 
+    public function showFilterPay(){
+        $user = JefaturaRepo::getUserData(Auth::user()->id);
+
+        return View::make('reportes.adelantos',array(
+            'titlePage' => "Adelantos",
+            'description' => "Centro de Reportes",
+            'user' => JefaturaRepo::getUserNotification($user),
+            'route' => Util::getTracert(),
+            'menu' => Util::getMenu($user['name'],$user['img']),
+            'centros' => CentroRepo::getSelectCenters(),
+            'empleados' => EmpleadoRepo::getSelectEmployes()
+        ));
+    }
+
     public function generateCSVReportAssistance(){
         if(Request::ajax()){
             $values = Input::get('values');
@@ -161,6 +175,7 @@ class ReportesController extends BaseController {
             $tmp = explode('/',$fecha['last']);
             $filters['last'] = $tmp[2]."-".$tmp[1]."-".$tmp[0];
         }
+        $filters['hasComments'] = $values['ifComments'];
 
         return $filters;
     }
@@ -182,6 +197,8 @@ class ReportesController extends BaseController {
             array_push($headersCSV, 'Centro');
         if(array_key_exists('boss', $filters))
             array_push($headersCSV, 'Jefatura');
+        if($filters['hasComments'] == 1 )
+            array_push($headersCSV, 'Comentario');
 
         try{
             $fileName = date('d-m-Y_H:i:s')."_By".Auth::user()->username;
@@ -205,6 +222,8 @@ class ReportesController extends BaseController {
                     array_push($tmp, $row->centro_costo);
                 if(array_key_exists('boss', $filters))
                     array_push($tmp, $row->rut_jefatura);
+                if($filters['hasComments'] == 1 )
+                    array_push($tmp, $row->comentario);
 
                 fputcsv($file, $tmp);
             }

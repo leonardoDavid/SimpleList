@@ -40,14 +40,14 @@ return array(
 	"integer"              => "The :attribute must be an integer.",
 	"ip"                   => "The :attribute must be a valid IP address.",
 	"max"                  => array(
-		"numeric" => "The :attribute may not be greater than :max.",
+		"numeric" => "El campo :attribute no puede ser mayor a :max.",
 		"file"    => "The :attribute may not be greater than :max kilobytes.",
 		"string"  => "The :attribute may not be greater than :max characters.",
 		"array"   => "The :attribute may not have more than :max items.",
 	),
 	"mimes"                => "The :attribute must be a file of type: :values.",
 	"min"                  => array(
-		"numeric" => "El campo :attribute minimo puede ser :min.",
+		"numeric" => "El campo :attribute debe ser mayor o igual a :min.",
 		"file"    => "The :attribute must be at least :min kilobytes.",
 		"string"  => "The :attribute must be at least :min characters.",
 		"array"   => "The :attribute must have at least :min items.",

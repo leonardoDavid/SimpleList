@@ -50,6 +50,11 @@ Route::group(array('before' => 'auth'), function(){
 	Route::post('/asistencia/reportes/generatecsv', 'ReportesController@generateCSVReportAssistance');
 	Route::get('/asistencia/files/{hashName}', 'ReportesController@getFileReportCSV');
 
+	//Adelantos
+	Route::get('/adelantos/ingresar', 'AdelantosController@getAddPay');
+	Route::post('/adelantos/ingresar', 'AdelantosController@AddPay');
+	Route::get('/adelantos/reportes', 'ReportesController@showFilterPay');
+
 	//Rutas Varias
 	Route::get('/', 'SiteController@getDashboard');
 	Route::get('/perfil','ProfileController@getProfile');

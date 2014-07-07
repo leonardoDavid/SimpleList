@@ -41,6 +41,8 @@ class ReporteRepo{
             if( !empty($filters['init']) && !empty($filters['last']) ){
                 $query->whereBetween( DB::raw('DATE(asistencia.created_at)') ,array($filters['init'],$filters['last']) );
             }
+            if( $filters['hasComments'] == 1 )
+                $query->addSelect('asistencia.comentario as comentario');
         }       
 
         return $query->get();
