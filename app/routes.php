@@ -51,6 +51,9 @@ Route::group(array('before' => 'auth'), function(){
 	Route::get('/asistencia/files/{hashName}', 'ReportesController@getFileReportCSV');
 
 	//Adelantos
+	Route::get('/adelantos',function(){
+		return Redirect::to('/adelantos/ingresar');
+	});
 	Route::get('/adelantos/ingresar', 'AdelantosController@getAddPay');
 	Route::post('/adelantos/ingresar', 'AdelantosController@AddPay');
 	Route::get('/adelantos/reportes', 'ReportesController@showFilterPay');

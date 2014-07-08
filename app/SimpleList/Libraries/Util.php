@@ -149,4 +149,32 @@ class Util{
         return $options;
     }
 
+    public static function selectTipoContrato($id){
+        $tipo = "";
+        switch ($id) {
+            case '1':
+                $tipo = 'Plazo Fijo';
+                break;
+            case '2':
+                $tipo  = 'Por Hora';
+                break;
+            case '3':
+                $tipo = 'Indefinido';
+                break;
+        }
+        return $tipo;
+    }
+
+    public static function toDate($fecha){
+        if(!empty($fecha)){
+            $tmp = explode('/', $fecha);
+            if(is_array($tmp) && count($tmp) == 3)
+                return date($tmp[2]."-".$tmp[1]."-".$tmp[0]." h:i:s");
+            else
+                return date('2015-12-31 23:59:59');    
+        }
+        else
+            return date('3000-12-31 23:59:59');
+    }
+
 }

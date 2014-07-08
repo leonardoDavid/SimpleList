@@ -30,7 +30,11 @@ class EmpleadoManager{
                 'movil' => Input::get('movil'),
                 'prevision' => Input::get('prevision'),
                 'cargo' => Input::get('cargo'),
-                'centro' => Input::get('centro')
+                'centro' => Input::get('centro'),
+                'afp' => Input::get('afp'),
+                'fecha_contrato' => Input::get('fechaIngreso'),
+                'fecha_termino' => Input::get('fechaSalida'),
+                'tipo_contrato' => Input::get('tipo')
             ),
             array(
                 'rut' => 'required|unique:empleado,id',
@@ -41,7 +45,11 @@ class EmpleadoManager{
                 'movil' => 'required|numeric',
                 'prevision' => 'required',
                 'cargo' => 'required|numeric',
-                'centro' => 'required|numeric'
+                'centro' => 'required|numeric',
+                'afp' => 'required',
+                'fecha_contrato' => 'required|date',
+                'fecha_termino' => 'date|required_if:tipo_contrato,1|required_if:tipo_contrato,2',
+                'tipo_contrato' => 'required|in:1,2,3'
             )
         );
 
@@ -68,9 +76,13 @@ class EmpleadoManager{
             $empleado->direccion = Input::get('direction');
             $empleado->fono_fijo = Input::get('phone',null);
             $empleado->fono_movil = Input::get('movil');
-            $empleado->prevision = Input::get('prevision');
+            $empleado->prevision = strtoupper(Input::get('prevision'));
             $empleado->cargo = Input::get('cargo');
             $empleado->centro_costo = Input::get('centro');
+            $empleado->afp = strtoupper(Input::get('afp'));
+            $empleado->tipo_contrato = Util::selectTipoContrato(Input::get('tipo'));
+            $empleado->ingreso_contrato = Util::toDate(Input::get('fecha_contrato'));
+            $empleado->vencimiento_contrato = Util::toDate(Input::get('fecha_termino'));
             $empleado->active = 1;
             try {
                 $empleado->save();

@@ -108,7 +108,7 @@
                             <div class="col-xs-12 col-md-6">
                                 <div class="input-group">
                                     <span class="input-group-addon"><span class="fa fa-thumbs-down"></span></span>
-                                    <input id="fecha-salida" name="fecha-salida" type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask data-requiered="1" placeholder="Fecha de Termino"/>
+                                    <input id="fecha-salida" name="fecha-salida" type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask data-requiered="1" placeholder="Fecha de Termino" disabled/>
                                 </div>
                             </div>
                         </div>
@@ -301,6 +301,16 @@
     	clearFormAdd();
     });
 
+    $('#tipo').change(function(){
+        $('#fecha-salida').val('');
+        if($(this).val() == 1 ||  $(this).val() == 2){
+            $('#fecha-salida').attr('disabled',false);
+        }
+        else{
+            $('#fecha-salida').attr('disabled',true);   
+        }
+    });
+
     $('#addEmployedForm').submit(function(event){
     	event.preventDefault();
     	if(validate()){
@@ -318,8 +328,12 @@
     				phone : $('#phone').val(),
     				movil : $('#movil').val(),
     				prevision : $('#prevision').val(),
+                    afp : $('#afp').val(),
+                    fechaIngreso : $('#fecha-ingreso').val(),
+                    fechaSalida : $('#fecha-salida').val(),
+                    tipo : $('#tipo').val(),
     				cargo : $('#cargo').val(),
-    				centro : $('#centro').val(),
+    				centro : $('#centro').val()
     			},
     			success : function(response){
     				if(response['status']){
@@ -493,17 +507,20 @@
     function validate(){
     	var hasError = true;
     	$('.input-group *[data-requiered="1"]').each(function(index, el){
-    		if($(this).val() == "" || $(this).val() == "0"){
+            if(($(this).attr('id') == "fecha-salida" && ($('#tipo').val() != 1 && $('#tipo').val() != 2 ))){
+                hasError = true;
+            }
+    		else if($(this).val() == "" || $(this).val() == "0"){
     			$(this).parent().addClass('has-error');
     			hasError = false;
     		}
     	});
     	if(isNaN($('#phone').val())){
-    		$('#phone').parent().addClass('has-error')
+    		$('#phone').parent().addClass('has-error');
     		hasError = false;
     	}
     	if(isNaN($('#movil').val())){
-    		$('#movil').parent().addClass('has-error')
+    		$('#movil').parent().addClass('has-error');
     		hasError = false;
     	}
 
@@ -518,9 +535,13 @@
     	$('#direction').val("");
     	$('#phone').val("");
     	$('#movil').val("");
-    	$('#prevision').val("");
+        $('#prevision').val("");
+        $('#afp').val("");
+        $('#fecha-ingreso').val("");
+    	$('#fecha-salida').val("");
     	$('#cargo').val(0);
     	$('#centro').val(0);
+        $('#tipo').val(0);
         $('#addEmployed span').text("Agregar");
     }
 
