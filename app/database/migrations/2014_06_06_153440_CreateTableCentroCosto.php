@@ -14,7 +14,8 @@ class CreateTableCentroCosto extends Migration {
 			$tabla->increments('id')->unique();
 			$tabla->string('nombre',80);
 			$tabla->boolean('active');
-			$tabla->timestamps();
+			$tabla->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('updated_at')->default('0000-00-00 00:00:00');
 		});
 	}
 

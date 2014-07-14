@@ -34,7 +34,7 @@
 	        </div>
 		@endif
 	    <div class="col-xs-12 col-md-6">
-            <div class="box box-info">
+            <div class="box box-solid">
                 <div class="box-header">
                     <i class="fa fa-user"></i>
                     <h3 class="box-title">Mis Datos</h3>

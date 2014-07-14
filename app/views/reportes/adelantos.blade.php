@@ -89,7 +89,7 @@
 
         <!-- Filtro de Vista -->
 	    <div class="col-xs-12 col-md-12">
-            <div class="box">
+            <div class="box box-solid">
                 <div class="box-header">
                 	<div class="pull-right box-tools">
                         <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>

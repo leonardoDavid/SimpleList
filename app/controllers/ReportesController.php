@@ -181,6 +181,81 @@ class ReportesController extends BaseController {
             return App::abort(404);
     }
 
+    public function generateCSVReportAllEmployes(){
+        if(Request::ajax()){
+            $dataReport = ReporteRepo::allEmployes();
+            $filters = array(
+                'model' => 'empleado'
+            );
+
+            $report = $this->generateFileCSV($dataReport,$filters);
+            if ($report['status']) {
+                $response = array(
+                    'status' => true,
+                    'download' => $report['routeDownload']
+                );
+            }
+            else{
+                $response = array(
+                    'status' => false,
+                    'motivo' => $report['motivo'],
+                    'mensajes' => "",
+                    'ex' => $report['exception']
+                );
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => 'Error en el tipo de solicitud de datos'
+            );
+        }
+
+        return json_encode($response);
+    }
+
+    public function generateCSVReportAllCenter(){
+        if(Request::ajax()){
+            $dataReport = ReporteRepo::allCenters();
+            $filters = array(
+                'model' => 'centro_costo'
+            );
+
+            $report = $this->generateFileCSV($dataReport,$filters);
+            if ($report['status']) {
+                $response = array(
+                    'status' => true,
+                    'download' => $report['routeDownload']
+                );
+            }
+            else{
+                $response = array(
+                    'status' => false,
+                    'motivo' => $report['motivo'],
+                    'mensajes' => "",
+                    'ex' => $report['exception']
+                );
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => 'Error en el tipo de solicitud de datos'
+            );
+        }
+
+        return json_encode($response);
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Funciones Privadas
+    |--------------------------------------------------------------------------
+    |
+    | Estas son funciones sirven para sacar ciertos campos o filtros para la
+    | generación de los reportes.
+    |
+    */
     private function getRulesValidator($values){
         $columns = array();
         $rules = array();
@@ -235,6 +310,8 @@ class ReportesController extends BaseController {
         if(array_key_exists('ifComments', $values))
             $filters['hasComments'] = $values['ifComments'];
 
+        $filters['model'] = $values['model'];
+
         return $filters;
     }
 
@@ -242,12 +319,14 @@ class ReportesController extends BaseController {
         $response = array();
         $headersCSV = array();
 
-        array_push($headersCSV, 'RUT');
-        array_push($headersCSV, 'Nombre');
-        array_push($headersCSV, 'Apellido Paterno');
-        array_push($headersCSV, 'Apellido Materno');
-        array_push($headersCSV, 'Cargo');
-        array_push($headersCSV, 'Valor Día');
+        if($filters['model'] == "adelanto" || $filters['model'] == "asistencia" || $filters['model'] == "empleado"){
+            array_push($headersCSV, 'RUT');
+            array_push($headersCSV, 'Nombre');
+            array_push($headersCSV, 'Apellido Paterno');
+            array_push($headersCSV, 'Apellido Materno');
+            array_push($headersCSV, 'Cargo');
+            array_push($headersCSV, 'Valor Día');
+        }
         if(count($model) > 0 && $filters['model'] == "adelanto"){
             array_push($headersCSV, 'Monto');
             array_push($headersCSV, 'Fecha de Adelanto');
@@ -255,6 +334,26 @@ class ReportesController extends BaseController {
         if(count($model) > 0 && $filters['model'] == "asistencia"){
             array_push($headersCSV, 'Presente');
             array_push($headersCSV, 'Fecha de Lista');
+        }
+        if(count($model) > 0 && $filters['model'] == "empleado"){
+            array_push($headersCSV, 'Direccion');
+            array_push($headersCSV, 'Fono Fijo');
+            array_push($headersCSV, 'Fono Movil');
+            array_push($headersCSV, 'Prevision');
+            array_push($headersCSV, 'AFP');
+            array_push($headersCSV, 'Centro de Costo');
+            array_push($headersCSV, 'Tipo Contrato');
+            array_push($headersCSV, 'Inicio Contrato');
+            array_push($headersCSV, 'Fin Contrato');
+            array_push($headersCSV, 'Estado');
+            array_push($headersCSV, 'Ingresado en Sistema');
+            array_push($headersCSV, 'Ultima Actualizacion');
+        }
+        if(count($model) > 0 && $filters['model'] == "centro_costo"){
+            array_push($headersCSV, 'Nombre');
+            array_push($headersCSV, 'Estado');
+            array_push($headersCSV, 'Creado en el Sistema');
+            array_push($headersCSV, 'Ultima Actualizacion');
         }
 
         if(array_key_exists('center', $filters))
@@ -274,12 +373,14 @@ class ReportesController extends BaseController {
                 foreach ($model as $row){
                     $tmp = array();
 
-                    array_push($tmp, $row->rut_empleado);
-                    array_push($tmp, $row->nombre_empleado);
-                    array_push($tmp, $row->ape_paterno);
-                    array_push($tmp, $row->ape_materno);
-                    array_push($tmp, $row->cargo);
-                    array_push($tmp, $row->valor_dia);
+                    if($filters['model'] == "adelanto" || $filters['model'] == "asistencia" || $filters['model'] == "empleado"){
+                        array_push($tmp, $row->rut_empleado);
+                        array_push($tmp, $row->nombre_empleado);
+                        array_push($tmp, $row->ape_paterno);
+                        array_push($tmp, $row->ape_materno);
+                        array_push($tmp, $row->cargo);
+                        array_push($tmp, $row->valor_dia);
+                    }
                     if(count($model) > 0 && $filters['model'] == "asistencia"){
                         array_push($tmp, $row->asistio);
                         array_push($tmp, $row->tomada);
@@ -287,6 +388,28 @@ class ReportesController extends BaseController {
                     if(count($model) > 0 && $filters['model'] == "adelanto"){
                         array_push($tmp, $row->monto);
                         array_push($tmp, $row->dado);
+                    }
+                    if(count($model) > 0 && $filters['model'] == "empleado"){
+                        array_push($tmp, $row->direccion);
+                        array_push($tmp, $row->fijo);
+                        array_push($tmp, $row->movil);
+                        array_push($tmp, $row->prevision);
+                        array_push($tmp, $row->afp);
+                        array_push($tmp, $row->centro_costo);
+                        array_push($tmp, $row->tipo_contrato);
+                        array_push($tmp, $row->inicio_contrato);
+                        array_push($tmp, $row->fin_contrato);
+                        $estado = ($row->estado == 1) ? 'Habilitado' : 'Deshabilitado';
+                        array_push($tmp, $estado);
+                        array_push($tmp, $row->creado);
+                        array_push($tmp, $row->actualizado);
+                    }
+                    if(count($model) > 0 && $filters['model'] == "centro_costo"){
+                        array_push($tmp, $row->nombre);
+                        $estado = ($row->estado == 1) ? 'Habilitado' : 'Deshabilitado';
+                        array_push($tmp, $estado);
+                        array_push($tmp, $row->creado);
+                        array_push($tmp, $row->actualizado);
                     }
 
                     if(array_key_exists('center', $filters))
@@ -300,7 +423,24 @@ class ReportesController extends BaseController {
                 }
                 fclose($file);
 
-                $route = ($filters['model'] == "adelanto") ? "adelantos" : $filters['model'];
+                switch ($filters['model']) {
+                    case 'adelanto':
+                        $route = 'adelantos';
+                        break;
+
+                    case 'empleado':
+                        $route = 'admin/empleados';
+                        break;
+
+                    case 'centro_costo':
+                        $route = 'admin/centros';
+                        break;
+                    
+                    default:
+                        $route = $filters['model'];
+                        break;
+                }
+
                 $response = array(
                     'status' => true,
                     'routeDownload' => '/'.$route.'/files/'.Crypt::encrypt($fileName)

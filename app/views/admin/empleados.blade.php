@@ -33,7 +33,7 @@
 	<div class="row">
 		<!-- Agregar empleado -->
 	    <div class="col-xs-12 col-md-6">
-            <div class="box box-primary">
+            <div class="box box-solid">
             	<div class="overlay" data-autohide="1" id="over-add"></div>
             	<div class="afterAdd">
             		<h4>Empleado agregado <i class="fa fa-check"></i></h4>
@@ -41,8 +41,8 @@
             	</div>
                 <div class="box-header">
                     <div class="pull-right box-tools">
-                        <button class="btn btn-primary btn-sm" data-toggle="tooltip" id="clearForm" data-original-title="Limpiar"><i class="fa fa-eraser"></i></button>
-                        <button class="btn btn-primary btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
+                        <button class="btn btn-default btn-sm" data-toggle="tooltip" id="clearForm" data-original-title="Limpiar"><i class="fa fa-eraser"></i></button>
+                        <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
                     </div>
                     <i class="fa fa-plus"></i>
                     <h3 class="box-title">Agregar Empleado</h3>
@@ -157,14 +157,14 @@
             </div>
         </div>
 
-        <!-- Buscar/Eliminar empleado -->
+        <!-- Editar/Activar/Desactivar empleado -->
 	    <div class="col-xs-12 col-md-6">
-            <div class="box box-info">
+            <div class="box box-solid">
                 <div class="overlay" data-autohide="1" id="over-employed"></div>
                 <div class="box-header">
                     <div class="pull-right box-tools">
-                        <button class="btn btn-info btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
-                        <button class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
+                        <button class="btn btn-default btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
+                        <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
                     </div>
                     <i class="fa fa-filter"></i>
                     <h3 class="box-title">Gestionar Empleados</h3>
@@ -202,12 +202,16 @@
                 <div class="box-footer clearfix">
                     <p class="pull-left">A los marcados</p>
                     <div class="pull-right">
-                        <button class="btn btn-default" id="deleteEmployed"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-default" id="editEmployed"><span>Editar</span> <i class="fa fa-edit"></i></button>
                         <button class="btn btn-default" id="enabledEmployed"><span>Activar</span> <i class="fa fa-check"></i></button>
                         <button class="btn btn-default" id="disbledEmployed"><span>Desactivar</span> <i class="fa fa-times"></i></button>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="col-xs-12 col-md-12">
+            <button class="col-xs-12 col-md-12 btn btn-success" id="exportAllUsers">Exportar Usuarios <span class="fa fa-cloud-download"></span></button>
         </div>
 	</div>
 
@@ -223,7 +227,7 @@
                     <p id="list-error"></p>                       
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" data-dismiss="modal">Aceptar</button>
+                    <button class="btn btn-default" data-dismiss="modal">Aceptar</button>
                 </div>
             </div>
         </div>
@@ -240,9 +244,127 @@
                     <p id="confirm-text"></p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="btn-enabled">Aceptar</button>
-                    <button class="btn btn-primary" id="btn-disabled">Aceptar</button>
+                    <button class="btn btn-default" id="btn-enabled">Aceptar</button>
+                    <button class="btn btn-default" id="btn-disabled">Aceptar</button>
                     <button class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="editEmployedModal" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">SimpleList</h4>
+                </div>
+                <div class="modal-body" id="editForm">
+                    <input type="hidden" id="rutEmployedEdit">
+                    <p>Edición de Empleados, recuerde rellenar todo los campos obligatorios</p>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-barcode"></span></span>
+                                <input type="text" class="form-control" readonly="true" disabled="true" id="rutEdit" placeholder="RUT">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-user"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="nameEdit" placeholder="Nombre">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-user"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="ape_paternoEdit" placeholder="Apellido Paterno">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-user"></span></span>
+                                <input type="text" class="form-control" id="ape_maternoEdit" placeholder="Apellido Materno">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-medkit"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="previsionEdit" placeholder="Previsión">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-user-md"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="afpEdit" placeholder="AFP">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-clipboard"></span></span>
+                        <select id="tipoEdit" class="form-control" data-requiered="1">
+                            {{ $tipoContratos }}
+                        </select>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-thumbs-up"></span></span>
+                                <input id="fecha-ingresoEdit" name="fecha-ingresoEdit" type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask data-requiered="1" placeholder="Fecha de Inicio"/>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-thumbs-down"></span></span>
+                                <input id="fecha-salidaEdit" name="fecha-salidaEdit" type="text" class="form-control" data-inputmask="'alias': 'dd/mm/yyyy'" data-mask data-requiered="1" placeholder="Fecha de Termino" disabled/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon"><span class="fa fa-location-arrow"></span></span>
+                        <input type="text" class="form-control" data-requiered="1" id="directionEdit" placeholder="Dirección">
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-phone"></span></span>
+                                <input type="text" class="form-control" id="phoneEdit" placeholder="Teléfono Fijo">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-mobile-phone"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="movilEdit" placeholder="Teléfono Móvil">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-certificate"></span></span>
+                                <select id="cargoEdit" class="form-control" data-requiered="1">
+                                    {{ $cargos }}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-archive"></span></span>
+                                <select id="centroEdit" class="form-control" data-requiered="1">
+                                    {{ $centers }}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <p id="statusFinal" style="display:none" class="text-green">Proceso completado :)</p>
+                    <p class="pull-left" id="statusEdit">Llevas <span id="editFrom">0</span> de <span id="editTo"></span> registros editados</p>
+                    <button class="btn btn-default" id="btn-final-edit" data-dismiss="modal">Finalizar</button>
+                    <button class="btn btn-success" id="btn-next-edit">Siguiente</button>
                 </div>
             </div>
         </div>
@@ -251,6 +373,8 @@
 
 @section('scriptsInLine')
     var tableDataEmployes;
+    var empleados;
+    var contEdits;
 
 	$(function() {
         $.ajaxSetup({
@@ -260,7 +384,7 @@
         });
         $('*[data-autohide="1"]').hide();
         trackSelected();
-        $("#fecha-salida,#fecha-ingreso").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
+        $("#fecha-salida,#fecha-ingreso,#fecha-salidaEdit,#fecha-ingresoEdit").inputmask("dd/mm/yyyy", {"placeholder": "dd/mm/yyyy"});
         tableDataEmployes = $("#employes").DataTable({
             "oLanguage": {
                 "sEmptyTable": "Sin Datos",
@@ -308,6 +432,16 @@
         }
         else{
             $('#fecha-salida').attr('disabled',true);   
+        }
+    });
+
+    $('#tipoEdit').change(function(){
+        $('#fecha-salidaEdit').val('');
+        if($(this).val() == 1 ||  $(this).val() == 2){
+            $('#fecha-salidaEdit').attr('disabled',false);
+        }
+        else{
+            $('#fecha-salidaEdit').attr('disabled',true);   
         }
     });
 
@@ -359,9 +493,65 @@
     					$('#error-add').fadeOut();
     				}, 3000);
     			}
-    		});
-    		
+    		});    		
     	}
+    });
+
+    $('#btn-next-edit').click(function(){
+        if(validateEdit()){
+            $('#btn-next-edit , #btn-final-edit').attr('disabled',true);
+            $.ajax({
+                url: '/admin/empleados/edit',
+                type: 'post',
+                data: { 
+                    rut : $('#rutEdit').val(),
+                    name : $('#nameEdit').val(),
+                    ape_paterno : $('#ape_paternoEdit').val(),
+                    ape_materno : $('#ape_maternoEdit').val(),
+                    direction : $('#directionEdit').val(),
+                    phone : $('#phoneEdit').val(),
+                    movil : $('#movilEdit').val(),
+                    prevision : $('#previsionEdit').val(),
+                    afp : $('#afpEdit').val(),
+                    fechaIngreso : $('#fecha-ingresoEdit').val(),
+                    fechaSalida : $('#fecha-salidaEdit').val(),
+                    tipo : $('#tipoEdit').val(),
+                    cargo : $('#cargoEdit').val(),
+                    centro : $('#centroEdit').val()
+                },
+                success : function(response){
+                    if(response['status']){
+                        //Pasar al Siguiente
+                        contEdits++;
+                        $('#editFrom').text(contEdits);
+                        if(contEdits == empleados.length){
+                            $('#btn-next-edit').hide();
+                            $('#btn-final-edit').attr('disabled',false);
+                            $('#statusEdit').hide();
+                            $('#statusFinal').show();
+                        }
+                        else{
+                            loadTableEdit(empleados[contEdits]);
+                            $('#btn-next-edit , #btn-final-edit').attr('disabled',false);
+                        }
+                    }
+                    else{
+                        $('#btn-next-edit , #btn-final-edit').attr('disabled',false);
+                        $('#msj-error').text(response['motivo']);
+                        $('#list-error').html(response['errores']);
+                        if(response['abortEdit'])
+                            $('#editEmployedModal').modal('hide');
+                        $('#error-server').modal();                        
+                    }
+                },
+                error : function(xhr){
+                    $('#btn-next-edit , #btn-final-edit').attr('disabled',false);
+                    $('#msj-error').text("Existe un error de conexión, la edición de usuarios se ha abortado.");
+                    $('#editEmployedModal').modal('hide');
+                    $('#error-server').modal();
+                }
+            });         
+        }
     });
 
     $('input[type="text"],select[data-requiered="1"]').focus(function(event){
@@ -457,6 +647,114 @@
             event.preventDefault();
     });
 
+    $('#rutEdit').keypress(function(event){
+        var pass = true;
+        if($('#rutEdit').val().length == 9 || ($('#rutEdit').val().slice(-1) == "k" || $('#rutEdit').val().slice(-1) == "K"))
+            pass = false;
+        else if( (event.which == 107 || event.which == 75) ){
+            if(!($('#rutEdit').val().length >=7))
+                pass = false;
+        }
+        else if(event.which != 8 && isNaN(String.fromCharCode(event.which)))
+            pass = false;
+
+        if(!pass)
+            event.preventDefault();
+    });
+
+    $('#exportAllUsers').click(function(){
+        $.ajax({
+            url: '/admin/empleados/export',
+            type: 'post',
+            beforeSend : function(){
+                $('#exportAllUsers').attr('disabled',true);
+            },
+            success : function(response){
+                var obj = JSON.parse(response);
+                if(obj['status']){
+                    $('#exportAllUsers').attr('disabled',false);
+                    window.location = obj['download'];
+                }
+                else{
+                    $('#exportAllUsers').attr('disabled',false);
+                    $('#msj-error').text(obj['motivo']);
+                    $('#list-error').html(obj['mensajes']);
+                    $('#error-server').modal();
+                }
+            },
+            error : function(xhr){
+                $('#exportAllUsers').attr('disabled',false);
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#error-server').modal();
+            }
+        });
+    });
+
+    $('#editEmployed').click(function(){
+        if(values.length > 0){
+            $.ajax({
+                url: '/admin/empleados/info',
+                type: 'post',
+                data: { 'ids': values.toString() },
+                beforeSend : function(){
+                    $('#editEmployed').attr('disabled', true);
+                    $('#btn-next-edit,#btn-final-edit').attr('disabled',false).show();
+                    $('#statusEdit').show();
+                    $('#statusFinal').hide();
+                    $('#editFrom').text('0');
+                },
+                success : function(response){
+                    response = JSON.parse(response);
+                    if(response['status']){
+                        empleados = response['employes'];
+                        $('#editTo').text(empleados.length);
+                        $('#editEmployed').attr('disabled', false);
+                        loadTableEdit(empleados[0]);
+                        contEdits = 0;
+                        $('#editEmployedModal').modal();
+                    }
+                    else{
+                        $('#editEmployed').attr('disabled', false);
+                        $('#msj-error').text(response['motivo']);
+                        $('#error-server').modal();
+                    }
+                },
+                error : function(xhr){
+                    $('#editEmployed').attr('disabled', false);
+                    $('#msj-error').text('Error de conexión, intentelo más tarde');
+                    $('#error-server').modal();
+                }
+            });
+        }
+        else{
+            $('#msj-error').text('No ha seleccionado ningún empleado para editar');
+            $('#error-server').modal();
+        }
+    });
+
+    function loadTableEdit(empleado){
+        $('#rutEdit').val(empleado.rut);
+        $('#nameEdit').val(empleado.nombre);
+        $('#ape_paternoEdit').val(empleado.paterno);
+        $('#ape_maternoEdit').val(empleado.materno);
+        $('#directionEdit').val(empleado.direccion);
+        $('#phoneEdit').val(empleado.fonoFijo);
+        $('#movilEdit').val(empleado.fonoMovil);
+        $('#previsionEdit').val(empleado.prevision);
+        $('#afpEdit').val(empleado.afp);
+        $('#fecha-ingresoEdit').val(empleado.inicioContrato);
+        $('#fecha-salidaEdit').val(empleado.finContrato);
+        $('#cargoEdit').val(empleado.cargo);
+        $('#centroEdit').val(empleado.centroCosto);
+        $('#tipoEdit').val(empleado.tipoContrato);
+        if($('#tipoEdit').val() == 1 ||  $('#tipoEdit').val() == 2){
+            $('#fecha-salidaEdit').attr('disabled',false);
+        }
+        else{
+            $('#fecha-salidaEdit').attr('disabled',true);   
+        }
+    }
+
     function refreshTable(){
         tableDataEmployes._fnClearTable();
         $.ajax({
@@ -506,7 +804,7 @@
 
     function validate(){
     	var hasError = true;
-    	$('.input-group *[data-requiered="1"]').each(function(index, el){
+    	$('#addEmployedForm .input-group *[data-requiered="1"]').each(function(index, el){
             if(($(this).attr('id') == "fecha-salida" && ($('#tipo').val() != 1 && $('#tipo').val() != 2 ))){
                 hasError = true;
             }
@@ -525,6 +823,29 @@
     	}
 
     	return hasError;
+    }
+
+    function validateEdit(){
+        var hasError = true;
+        $('#editForm .input-group *[data-requiered="1"]').each(function(index, el){
+            if(($(this).attr('id') == "fecha-salidaEdit" && ($('#tipoEdit').val() != 1 && $('#tipoEdit').val() != 2 ))){
+                hasError = true;
+            }
+            else if($(this).val() == "" || $(this).val() == "0"){
+                $(this).parent().addClass('has-error');
+                hasError = false;
+            }
+        });
+        if(isNaN($('#phoneEdit').val())){
+            $('#phoneEdit').parent().addClass('has-error');
+            hasError = false;
+        }
+        if(isNaN($('#movilEdit').val())){
+            $('#movilEdit').parent().addClass('has-error');
+            hasError = false;
+        }
+
+        return hasError;
     }
 
     function clearFormAdd(){

@@ -17,7 +17,8 @@ class CreateTablePermisosMenu extends Migration {
 			$tabla->integer('user_id');
 			$tabla->integer('menu_id');
 			$tabla->integer('type');
-			$tabla->timestamps();
+			$tabla->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('updated_at')->default('0000-00-00 00:00:00');
 		});
 	}
 

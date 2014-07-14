@@ -19,7 +19,7 @@ class EmpleadosSeeder extends Seeder {
             'img_perfil' => "/img/profile/grumpy.jpg",
             'tipo_contrato' => "Indefinido",
             'ingreso_contrato' => "2014-01-02 07:31:40",
-            'vencimiento_contrato' => "",
+            'vencimiento_contrato' => "2099-12-12 23:59:59",
             'cargo' => 1,
             'centro_costo' => 1,
             'active' => 1

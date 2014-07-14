@@ -14,7 +14,8 @@ class CreateTableJefaturaEmpleado extends Migration {
 			$tabla->increments('id')->unique();
 			$tabla->string('id_jefatura',10);
 			$tabla->string('id_empleado',10);
-			$tabla->timestamps();
+			$tabla->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('updated_at')->default('0000-00-00 00:00:00');
 		});
 	}
 

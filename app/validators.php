@@ -50,3 +50,18 @@ Validator::extend('after_init_date', function($attribute, $value, $parameters){
 	else
 		return false;
 });
+
+Validator::extend('fecha', function($attribute, $value, $parameters){
+	$fecha = explode("/", $value);
+	if( (is_array($fecha) && count($fecha) == 3) && ( is_numeric($fecha[0]) && is_numeric($fecha[1]) && is_numeric($fecha[2])) ){
+		return checkdate($fecha[1], $fecha[0], $fecha[2]);
+	}
+	else{
+		$fecha = explode("-", $value);
+		if( (is_array($fecha) && count($fecha) == 3) && ( is_numeric($fecha[0]) && is_numeric($fecha[1]) && is_numeric($fecha[2])) ){
+			return checkdate($fecha[1], $fecha[0], $fecha[2]);
+		}
+		else
+			return false;
+	}
+});

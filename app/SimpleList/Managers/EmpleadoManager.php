@@ -17,41 +17,45 @@ class EmpleadoManager{
     | deshabilitar empleados dentro del sistema
     |
     */
-    public static function save(){
+    public static function save($update = false){
         $rutEmployed = Util::clearRut(Input::get('rut'));
 
-        $validation = Validator::make(
-            array(
-                'rut' => $rutEmployed,
-                'name' => Input::get('name'),
-                'ape_paterno' => Input::get('ape_paterno'),
-                'direction' => Input::get('direction'),
-                'phone' => Input::get('phone'),
-                'movil' => Input::get('movil'),
-                'prevision' => Input::get('prevision'),
-                'cargo' => Input::get('cargo'),
-                'centro' => Input::get('centro'),
-                'afp' => Input::get('afp'),
-                'fecha_contrato' => Input::get('fechaIngreso'),
-                'fecha_termino' => Input::get('fechaSalida'),
-                'tipo_contrato' => Input::get('tipo')
-            ),
-            array(
-                'rut' => 'required|unique:empleado,id',
-                'name' => 'required',
-                'ape_paterno' => 'required',
-                'direction' => 'required',
-                'phone' => 'numeric',
-                'movil' => 'required|numeric',
-                'prevision' => 'required',
-                'cargo' => 'required|numeric',
-                'centro' => 'required|numeric',
-                'afp' => 'required',
-                'fecha_contrato' => 'required|date',
-                'fecha_termino' => 'date|required_if:tipo_contrato,1|required_if:tipo_contrato,2',
-                'tipo_contrato' => 'required|in:1,2,3'
-            )
+        $values = array(
+            'rut' => $rutEmployed,
+            'name' => Input::get('name'),
+            'ape_paterno' => Input::get('ape_paterno'),
+            'direction' => Input::get('direction'),
+            'phone' => Input::get('phone'),
+            'movil' => Input::get('movil'),
+            'prevision' => Input::get('prevision'),
+            'cargo' => Input::get('cargo'),
+            'centro' => Input::get('centro'),
+            'afp' => Input::get('afp'),
+            'fecha_contrato' => Input::get('fechaIngreso'),
+            'fecha_termino' => Input::get('fechaSalida'),
+            'tipo_contrato' => Input::get('tipo')
         );
+
+        $filters = array(
+            'rut' => 'required|unique:empleado,id',
+            'name' => 'required',
+            'ape_paterno' => 'required',
+            'direction' => 'required',
+            'phone' => 'numeric',
+            'movil' => 'required|numeric',
+            'prevision' => 'required',
+            'cargo' => 'required|numeric',
+            'centro' => 'required|numeric',
+            'afp' => 'required',
+            'fecha_contrato' => 'required|regex:/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/|fecha',
+            'fecha_termino' => 'required_if:tipo_contrato,1|required_if:tipo_contrato,2|regex:/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/|fecha',
+            'tipo_contrato' => 'required|in:1,2,3'
+        );
+
+        if($update)
+            $filters['rut'] = 'exists:empleado,id';
+
+        $validation = Validator::make($values,$filters);
 
         if($validation->fails()){
             $errores = $validation->messages()->all();
@@ -64,12 +68,19 @@ class EmpleadoManager{
                 'status' => false,
                 'motivo' => "Hay campos que no son correctos",
                 'errores' => $mensajes,
-                'detalle' => "<strong>Woou! </strong> No se ha podido ingresar el registro ya que hay campos invalidos:"
+                'detalle' => "<strong>Woou! </strong> No se ha podido ingresar el registro ya que hay campos invalidos:",
+                'abortEdit' => true
             );
         }
         else{
-            $empleado = new Empleado;
-            $empleado->id = $rutEmployed;
+            if($update){
+                $empleado = Empleado::find($rutEmployed);
+            }
+            else{
+                $empleado = new Empleado;
+                $empleado->id = $rutEmployed;
+                $empleado->active = 1;
+            }
             $empleado->nombre = Input::get('name');
             $empleado->ape_paterno = Input::get('ape_paterno');
             $empleado->ape_materno = Input::get('ape_materno',null);
@@ -81,9 +92,8 @@ class EmpleadoManager{
             $empleado->centro_costo = Input::get('centro');
             $empleado->afp = strtoupper(Input::get('afp'));
             $empleado->tipo_contrato = Util::selectTipoContrato(Input::get('tipo'));
-            $empleado->ingreso_contrato = Util::toDate(Input::get('fecha_contrato'));
-            $empleado->vencimiento_contrato = Util::toDate(Input::get('fecha_termino'));
-            $empleado->active = 1;
+            $empleado->ingreso_contrato = Util::toDate(Input::get('fechaIngreso'));
+            $empleado->vencimiento_contrato = Util::toDate(Input::get('fechaSalida'));
             try {
                 $empleado->save();
                 $response = array(
@@ -93,7 +103,8 @@ class EmpleadoManager{
                 $response = array(
                     'status' => false,
                     'motivo' => "Error al tratar de guardar",
-                    'execption' => $e->getMessage()
+                    'execption' => $e->getMessage(),
+                    'abortEdit' => true
                 );   
             }
         }
@@ -160,6 +171,10 @@ class EmpleadoManager{
 
     public static function disabled(){
         return EmpleadoManager::enabled(1);
+    }
+
+    public static function update(){
+        return EmpleadoManager::save(true);
     }
 
 }

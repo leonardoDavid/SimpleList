@@ -18,7 +18,8 @@ class CreateTableSubMenu extends Migration {
 			$tabla->string('icon');
 			$tabla->integer('menu_id');
 			$tabla->integer('active');
-			$tabla->timestamps();
+			$tabla->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('updated_at')->default('0000-00-00 00:00:00');
 		});
 	}
 

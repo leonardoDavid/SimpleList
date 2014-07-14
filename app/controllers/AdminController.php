@@ -161,4 +161,27 @@ class AdminController extends BaseController {
         return $response;
     }
 
+    public function getInfoEmploy($id = null){
+        if(is_null($id))
+            $response = EmpleadoRepo::getInfo(Input::get('ids', null));
+        else
+            $response = EmpleadoRepo::getInfo($id);
+
+        return json_encode($response);
+    }
+
+    public function editEmployed(){
+        if(Request::ajax()){
+            $response = EmpleadoManager::update();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud",
+                'abortEdit' => true
+            );
+        }
+        return $response;
+    }
+
 }

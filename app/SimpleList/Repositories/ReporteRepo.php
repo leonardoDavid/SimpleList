@@ -2,6 +2,8 @@
 
 use SimpleList\Entities\Adelanto;
 use SimpleList\Entities\Asistencia;
+use SimpleList\Entities\Empleado;
+use SimpleList\Entities\CentroCosto;
 use Illuminate\Support\Facades\DB;
 
 class ReporteRepo{
@@ -84,6 +86,33 @@ class ReporteRepo{
             $d = new \DateTime(date('Y-m-01'));
             $query->whereBetween( DB::raw('DATE(adelanto.created_at)') ,array(date('Y-m-01'),$d->format('Y-m-t')) );
         } 
+
+        return $query->get();
+    }
+
+    public static function allEmployes(){
+        //Datos del Epleado
+        $query = Empleado::select('empleado.nombre as nombre_empleado','empleado.ape_paterno','empleado.ape_materno','empleado.id as rut_empleado',
+                                'empleado.direccion as direccion','empleado.fono_fijo as fijo','fono_movil as movil','empleado.afp as afp',
+                                'empleado.prevision as prevision','empleado.tipo_contrato as tipo_contrato','empleado.ingreso_contrato as inicio_contrato',
+                                'empleado.vencimiento_contrato as fin_contrato','empleado.active as estado',
+                                'empleado.created_at as creado','empleado.updated_at as actualizado');
+                                
+        //Datos del Cargo
+        $query->join('cargo','cargo.id','=','empleado.cargo')
+            ->addSelect('cargo.nombre as cargo','cargo.valor_dia as valor_dia');
+
+        //Datos del Centro de Costo
+        $query->join('centro_costo','centro_costo.id','=','empleado.centro_costo');
+        $query->addSelect('centro_costo.nombre as centro_costo');
+
+        return $query->get();
+    }
+
+    public static function allCenters(){
+        //Datos del Epleado
+        $query = CentroCosto::select('centro_costo.nombre as nombre','centro_costo.active as estado',
+                                'centro_costo.created_at as creado','centro_costo.updated_at as actualizado');
 
         return $query->get();
     }

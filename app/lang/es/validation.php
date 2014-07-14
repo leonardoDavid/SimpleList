@@ -29,6 +29,7 @@ return array(
 	),
 	"confirmed"            => "The :attribute confirmation does not match.",
 	"date"                 => "El campo :attribute no es una fecha valida.",
+	"fecha"                 => "El campo :attribute no es una fecha valida.",
 	"date_format"          => "The :attribute does not match the format :format.",
 	"different"            => "The :attribute and :other must be different.",
 	"digits"               => "The :attribute must be :digits digits.",

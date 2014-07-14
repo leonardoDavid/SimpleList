@@ -126,9 +126,9 @@ class Util{
     }
 
     public static function getLastDayAssitance(){
-        $dia = Asistencia::select( DB::raw('DATE(asistencia.created_at)') )->orderBy('created_at','desc')->take(1)->get();
+        $dia = Asistencia::select( DB::raw('DATE(asistencia.created_at) as creado') )->orderBy('created_at','desc')->take(1)->get();
         if(count($dia) > 0){
-            $dia = explode("-", $dia->created_at);
+            $dia = explode("-", $dia[0]->creado);
             return $dia[2]."/".$dia[1]."/".$dia[0];
         }
         else
@@ -171,10 +171,10 @@ class Util{
             if(is_array($tmp) && count($tmp) == 3)
                 return date($tmp[2]."-".$tmp[1]."-".$tmp[0]." h:i:s");
             else
-                return date('2015-12-31 23:59:59');    
+                return date('2099-12-12 23:59:59');    
         }
         else
-            return date('3000-12-31 23:59:59');
+            return date('2099-12-12 23:59:59');
     }
 
 }

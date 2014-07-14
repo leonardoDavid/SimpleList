@@ -21,13 +21,14 @@ class CreateTableEmpleado extends Migration {
 			$tabla->string('afp');
 			$tabla->string('img_perfil');
 			$tabla->enum('tipo_contrato', array('Plazo Fijo', 'Por Hora', 'Indefinido'));
-			$tabla->timestamp('ingreso_contrato')->default('0000-00-00 00:00:00');
-			$tabla->timestamp('vencimiento_contrato')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('ingreso_contrato')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('vencimiento_contrato')->default('0000-00-00 00:00:00');
 			//Campos que sirven de relaciones
 			$tabla->integer('cargo');
 			$tabla->integer('centro_costo');
 			$tabla->boolean('active');
-			$tabla->timestamps();
+			$tabla->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('updated_at')->default('0000-00-00 00:00:00');
 		});
 	}
 

@@ -33,7 +33,7 @@
 	<div class="row">
 		<!-- Agregar empleado -->
 	    <div class="col-xs-12 col-md-6">
-            <div class="box box-primary">
+            <div class="box box-solid">
             	<div class="overlay" data-autohide="1" id="over-add"></div>
             	<div class="afterAdd">
             		<h4>Centro de Costos agregado <i class="fa fa-check"></i></h4>
@@ -41,8 +41,8 @@
             	</div>
                 <div class="box-header">
                     <div class="pull-right box-tools">
-                        <button class="btn btn-primary btn-sm" data-toggle="tooltip" id="clearForm" data-original-title="Limpiar"><i class="fa fa-eraser"></i></button>
-                        <button class="btn btn-primary btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
+                        <button class="btn btn-default btn-sm" data-toggle="tooltip" id="clearForm" data-original-title="Limpiar"><i class="fa fa-eraser"></i></button>
+                        <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
                     </div>
                     <i class="fa fa-plus"></i>
                     <h3 class="box-title">Agregar Centro de Costos</h3>
@@ -66,12 +66,12 @@
 
         <!-- Buscar/Eliminar centro -->
 	    <div class="col-xs-12 col-md-6">
-            <div class="box box-info">
+            <div class="box box-solid">
                 <div class="overlay" data-autohide="1" id="over-center"></div>
                 <div class="box-header">
                     <div class="pull-right box-tools">
-                        <button class="btn btn-info btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
-                        <button class="btn btn-info btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
+                        <button class="btn btn-default btn-sm" data-toggle="tooltip" id="refresh" data-original-title="Actualizar"><i class="fa fa-refresh"></i></button>
+                        <button class="btn btn-default btn-sm" data-widget="collapse" data-toggle="tooltip" title="" data-original-title="Minimizar"><i class="fa fa-minus"></i></button>
                     </div>
                     <i class="fa fa-filter"></i>
                     <h3 class="box-title">Gestionar Centros</h3>
@@ -107,12 +107,16 @@
                 <div class="box-footer clearfix">
                     <p class="pull-left">A los marcados</p>
                     <div class="pull-right">
-                        <button class="btn btn-default" id="deleteCenter"><span>Eliminar</span> <i class="fa fa-trash-o"></i></button>
+                        <button class="btn btn-default" id="editCenter"><span>Editar</span> <i class="fa fa-edit"></i></button>
                         <button class="btn btn-default" id="enabledCenter"><span>Activar</span> <i class="fa fa-check"></i></button>
                         <button class="btn btn-default" id="disbledCenter"><span>Desactivar</span> <i class="fa fa-times"></i></button>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="col-xs-12 col-md-12">
+            <button class="col-xs-12 col-md-12 btn btn-success" id="exportAllCenters">Exportar Centros <span class="fa fa-cloud-download"></span></button>
         </div>
 	</div>
 
@@ -314,6 +318,34 @@
                 }
             });
         }
+    });
+
+    $('#exportAllCenters').click(function(){
+        $.ajax({
+            url: '/admin/centros/export',
+            type: 'post',
+            beforeSend : function(){
+                $('#exportAllCenters').attr('disabled',true);
+            },
+            success : function(response){
+                var obj = JSON.parse(response);
+                if(obj['status']){
+                    $('#exportAllCenters').attr('disabled',false);
+                    window.location = obj['download'];
+                }
+                else{
+                    $('#exportAllCenters').attr('disabled',false);
+                    $('#msj-error').text(obj['motivo']);
+                    $('#list-error').html(obj['mensajes']);
+                    $('#error-server').modal();
+                }
+            },
+            error : function(xhr){
+                $('#exportAllCenters').attr('disabled',false);
+                $('#msj-error').text('Error de conexión al momento de recuperar los datos, intentelo más tarde.');
+                $('#error-server').modal();
+            }
+        });
     });
 
     function trackSelected(){

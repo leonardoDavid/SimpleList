@@ -1,9 +1,11 @@
 <?php namespace SimpleList\Repositories;
 
 use SimpleList\Entities\Empleado;
+use SimpleList\Libraries\Util;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class EmpleadoRepo{
 	
@@ -97,6 +99,156 @@ class EmpleadoRepo{
             $options .= "<option value='".$row->id."' ".$selected.">".ucwords($row->nombre)." ".ucwords($row->ape_paterno)."</option>";
         }
         return $options;
+    }
+
+    public static function getInfo($id = null){
+        if(!is_null($id)){
+            $ruts = explode(",", $id);
+            $pased = true;
+            if(count($ruts) > 1){
+                //Busqueda de mucho usuarios
+                $rutsEnabled = array();
+                foreach ($ruts as $employ){
+                    $rutEmployed = Util::clearRut($employ);
+                    $validation = Validator::make(
+                        array(
+                            'rut' => $rutEmployed
+                        ),
+                        array(
+                            'rut' => 'required|exists:empleado,id'
+                        )
+                    );
+
+                    if($validation->fails()){
+                        $pased = false;
+                        break;
+                    }
+                    else{
+                        array_push($rutsEnabled, $rutEmployed);
+                    }
+                }
+
+                if($pased){
+                    $cont = 0;
+                    foreach ($rutsEnabled as $rut){
+                        $empleado = Empleado::find($rut);
+
+                        $inicio = explode(" ", $empleado->ingreso_contrato);
+                        $inicio = explode("-", $inicio[0]);
+                        $fin = explode(" ", $empleado->vencimiento_contrato);
+                        $fin = explode("-", $fin[0]);
+                        switch ($empleado->tipo_contrato){
+                            case 'Plazo Fijo':
+                                $tipo = 1;
+                                break;
+                            case 'Por Hora':
+                                $tipo = 2;
+                                break;
+                            case 'Indefinido':
+                                $tipo = 3;
+                                break;
+                        }
+
+                        $employes[$cont] = array(
+                            'rut' => $empleado->id,
+                            'nombre' => $empleado->nombre,
+                            'paterno' => $empleado->ape_paterno,
+                            'materno' => $empleado->ape_materno,
+                            'direccion' => $empleado->direccion,
+                            'fonoFijo' => $empleado->fono_fijo,
+                            'fonoMovil' => $empleado->fono_movil,
+                            'prevision' => $empleado->prevision,
+                            'afp' => $empleado->afp,
+                            'tipoContrato' => $tipo,
+                            'inicioContrato' => $inicio[2]."/".$inicio[1]."/".$inicio[0],                        
+                            'finContrato' => $fin[2]."/".$fin[1]."/".$fin[0],
+                            'cargo' => $empleado->cargo,
+                            'centroCosto' => $empleado->centro_costo,
+                            'estado' => $empleado->active
+                        );
+                        $cont++;
+                    }
+                    $response = array(
+                        'status' => true,
+                        'employes' => $employes
+                    );
+                }
+                else{
+                    $response = array(
+                        'status' => false,
+                        'motivo' => "Hay usuarios no registrados en el sistema, imposible actualizar"
+                    );            
+                }
+            }
+            else{
+                //Busqueda de un Usuario
+                $validation = Validator::make(
+                    array(
+                        'rut' => $id
+                    ),
+                    array(
+                        'rut' => 'required|exists:empleado,id'
+                    )
+                );
+
+                if($validation->fails()){
+                    $response = array(
+                        'status' => false,
+                        'motivo' => 'Usuario no registrado en el Sistema'
+                    );
+                }
+                else{
+                    $empleado = Empleado::find($id);
+
+                    $inicio = explode(" ", $empleado->ingreso_contrato);
+                    $inicio = explode("-", $inicio[0]);
+                    $fin = explode(" ", $empleado->vencimiento_contrato);
+                    $fin = explode("-", $fin[0]);
+                    switch ($empleado->tipo_contrato){
+                        case 'Plazo Fijo':
+                            $tipo = 1;
+                            break;
+                        case 'Por Hora':
+                            $tipo = 2;
+                            break;
+                        case 'Indefinido':
+                            $tipo = 3;
+                            break;
+                    }
+
+                    $employes[0] = array(
+                        'rut' => $empleado->id,
+                        'nombre' => $empleado->nombre,
+                        'paterno' => $empleado->ape_paterno,
+                        'materno' => $empleado->ape_materno,
+                        'direccion' => $empleado->direccion,
+                        'fonoFijo' => $empleado->fono_fijo,
+                        'fonoMovil' => $empleado->fono_movil,
+                        'prevision' => $empleado->prevision,
+                        'afp' => $empleado->afp,
+                        'tipoContrato' => $tipo,
+                        'inicioContrato' => $inicio[2]."/".$inicio[1]."/".$inicio[0],                        
+                        'finContrato' => $fin[2]."/".$fin[1]."/".$fin[0],
+                        'cargo' => $empleado->cargo,
+                        'centroCosto' => $empleado->centro_costo,
+                        'estado' => $empleado->active
+                    );
+
+                    $response = array(
+                        'status' => true,
+                        'employes' => $employes
+                    );
+                }
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "No se envio un ID de empleado"
+            );
+        }
+
+        return $response;
     }
 
 }

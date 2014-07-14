@@ -17,7 +17,8 @@ class CreateTableJeaftura extends Migration {
 			$tabla->string('remember_token');
 			$tabla->string('id_empleado',10);
 			$tabla->boolean('active');
-			$tabla->timestamps();
+			$tabla->dateTime('created_at')->default('0000-00-00 00:00:00');
+			$tabla->dateTime('updated_at')->default('0000-00-00 00:00:00');
 		});
 	}
 

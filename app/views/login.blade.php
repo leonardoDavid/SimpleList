@@ -7,7 +7,7 @@
     <meta name="description" content="SimpleList, sistema de lista">
     <meta name="author" content="Evolutionet Chile">
     <link rel="shortcut icon" href="/img/favicon.ico">
-    <title>Sistma de Checklist</title>
+    <title>SimpleList | Login</title>
 
     <!-- Styles -->
     <link href="/css/bootstrap.min.css" rel="stylesheet">

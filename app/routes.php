@@ -26,17 +26,23 @@ Route::group(array('before' => 'auth'), function(){
 		return Redirect::to('/admin/empleados');
 	});
 	Route::get('/admin/empleados', 'AdminController@getEmpleados');
+	Route::get('/admin/empleados/files/{hashName}', 'ReportesController@getFileReportCSV');
 	Route::post('/admin/empleados/add','AdminController@addEmployed');
 	Route::post('/admin/empleados/refresh','AdminController@refreshEmployed');
 	Route::post('/admin/empleados/enabled','AdminController@enabledEmployed');
 	Route::post('/admin/empleados/disabled','AdminController@disabledEmployed');
+	Route::post('/admin/empleados/export','ReportesController@generateCSVReportAllEmployes');
+	Route::post('/admin/empleados/info', 'AdminController@getInfoEmploy');
+	Route::post('/admin/empleados/edit','AdminController@editEmployed');
 	
 	//Administrador de Centros de Costo
 	Route::get('/admin/centros', 'AdminController@getCentros');
+	Route::get('/admin/centros/files/{hashName}', 'ReportesController@getFileReportCSV');
 	Route::post('/admin/centros/add','AdminController@addCenter');
 	Route::post('/admin/centros/refresh','AdminController@refreshCenter');
 	Route::post('/admin/centros/enabled','AdminController@enabledCenter');
 	Route::post('/admin/centros/disabled','AdminController@disabledCenter');
+	Route::post('/admin/centros/export','ReportesController@generateCSVReportAllCenter');
 
 	//Asistencia
 	Route::get('/asistencia',function(){
