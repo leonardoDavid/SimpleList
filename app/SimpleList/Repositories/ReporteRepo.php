@@ -2,6 +2,7 @@
 
 use SimpleList\Entities\Adelanto;
 use SimpleList\Entities\Asistencia;
+use SimpleList\Entities\Cargo;
 use SimpleList\Entities\Empleado;
 use SimpleList\Entities\CentroCosto;
 use Illuminate\Support\Facades\DB;
@@ -86,7 +87,7 @@ class ReporteRepo{
             $d = new \DateTime(date('Y-m-01'));
             $query->whereBetween( DB::raw('DATE(adelanto.created_at)') ,array(date('Y-m-01'),$d->format('Y-m-t')) );
         } 
-
+        
         return $query->get();
     }
 
@@ -113,6 +114,14 @@ class ReporteRepo{
         //Datos del Epleado
         $query = CentroCosto::select('centro_costo.nombre as nombre','centro_costo.active as estado',
                                 'centro_costo.created_at as creado','centro_costo.updated_at as actualizado');
+
+        return $query->get();
+    }
+
+    public static function allCargos(){
+        //Datos del Epleado
+        $query = Cargo::select('cargo.nombre as nombre','cargo.active as estado','cargo.valor_dia as valor_dia',
+                                'cargo.created_at as creado','cargo.updated_at as actualizado');
 
         return $query->get();
     }

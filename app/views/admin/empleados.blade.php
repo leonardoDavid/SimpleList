@@ -1,7 +1,7 @@
 @extends('layout')
 
 @section('title')
-	SimpleList | Administración
+	SimpleList | Administración de Empleados
 @stop
 
 @section('styles')
@@ -259,7 +259,6 @@
                     <h4 class="modal-title">SimpleList</h4>
                 </div>
                 <div class="modal-body" id="editForm">
-                    <input type="hidden" id="rutEmployedEdit">
                     <p>Edición de Empleados, recuerde rellenar todo los campos obligatorios</p>
                     <div class="row">
                         <div class="col-xs-12 col-md-6">

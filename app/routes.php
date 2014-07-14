@@ -43,6 +43,15 @@ Route::group(array('before' => 'auth'), function(){
 	Route::post('/admin/centros/enabled','AdminController@enabledCenter');
 	Route::post('/admin/centros/disabled','AdminController@disabledCenter');
 	Route::post('/admin/centros/export','ReportesController@generateCSVReportAllCenter');
+	Route::post('/admin/centros/info', 'AdminController@getInfoCenter');
+	Route::post('/admin/centros/edit','AdminController@editCenter');
+
+	//Administrador de Cargos
+	Route::get('/admin/cargos', 'AdminController@getCargos');
+	Route::get('/admin/cargos/files/{hashName}', 'ReportesController@getFileReportCSV');
+	Route::post('/admin/cargos/add','AdminController@addCargo');
+	Route::post('/admin/cargos/export','ReportesController@generateCSVReportAllCargos');
+	Route::post('/admin/cargos/refresh','AdminController@refreshCargo');
 
 	//Asistencia
 	Route::get('/asistencia',function(){

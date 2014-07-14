@@ -23,4 +23,8 @@ class CargoRepo{
         return $options;
     }
 
+    public static function all(){
+        return Cargo::all();
+    }
+
 }

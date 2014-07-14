@@ -80,12 +80,16 @@ class Util{
     }
 
     public static function clearRut($rut){
-        $rutEmployed = str_replace(".", "", $rut);
-        $rutEmployed = str_replace(",", "", $rutEmployed);
-        $rutEmployed = str_replace("-", "", $rutEmployed);
-        $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
-        $rutEmployed .= "-";
-        $rutEmployed .= substr($rut, -1);
+        if($rut != 0){
+            $rutEmployed = str_replace(".", "", $rut);
+            $rutEmployed = str_replace(",", "", $rutEmployed);
+            $rutEmployed = str_replace("-", "", $rutEmployed);
+            $rutEmployed = substr($rutEmployed, 0,count($rutEmployed)-2);
+            $rutEmployed .= "-";
+            $rutEmployed .= substr($rut, -1);
+        }
+        else
+            return 0;
 
         return $rutEmployed;
     }

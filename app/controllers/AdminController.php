@@ -7,6 +7,7 @@ use SimpleList\Repositories\CargoRepo;
 use SimpleList\Libraries\Util;
 use SimpleList\Managers\EmpleadoManager;
 use SimpleList\Managers\CentroManager;
+use SimpleList\Managers\CargoManager;
 
 class AdminController extends BaseController {
     /*
@@ -48,6 +49,19 @@ class AdminController extends BaseController {
         ));
     }
 
+    public function getCargos(){
+        $user = JefaturaRepo::getUserData(Auth::user()->id);
+
+        return View::make('admin.cargos',array(
+            'titlePage' => "Administración",
+            'description' => "Cargos",
+            'route' => Util::getTracert(),
+            'menu' => Util::getMenu($user['name'],$user['img']),
+            'user' => JefaturaRepo::getUserNotification($user),
+            'cargosListTable' => CargoRepo::all()
+        ));
+    }
+
     public function addEmployed(){
         if(Request::ajax()){
             $response = EmpleadoManager::save();
@@ -64,6 +78,19 @@ class AdminController extends BaseController {
     public function addCenter(){
         if(Request::ajax()){
             $response = CentroManager::save();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
+    public function addCargo(){
+        if(Request::ajax()){
+            $response = CargoManager::save();
         }
         else{
             $response = array(
@@ -102,6 +129,24 @@ class AdminController extends BaseController {
                 'lastname' => ucwords($employed->paterno)." ".ucwords($employed->materno),
                 'active' => ($employed->status == 1) ? "Activo" : "Deshabilitado",
                 'checkbox' => "<input type='checkbox' class='flat-orange' name='employedIdOperating' value='".$employed->rut."'>"
+            );
+            $response[$index] = $tmp;
+            $index++;
+        }
+        return $response;
+    }
+
+    public function refreshCargo(){
+        $response = array();
+        $index = 0;
+        $cargoListTable = CargoRepo::all();
+        foreach($cargoListTable as $cargo){
+            $tmp = array(
+                'name' => $cargo->nombre,
+                'valor' => $cargo->valor_dia,
+                'active' => ($cargo->active == 1) ? "Activo" : "Deshabilitado",
+                'added' => $cargo->created_at,
+                'checkbox' => "<input type='checkbox' class='flat-orange' name='cargoIdOperating' value='".$cargo->id."'>"
             );
             $response[$index] = $tmp;
             $index++;
@@ -170,9 +215,32 @@ class AdminController extends BaseController {
         return json_encode($response);
     }
 
+    public function getInfoCenter($id = null){
+        if(is_null($id))
+            $response = CentroRepo::getInfo(Input::get('ids', null));
+        else
+            $response = CentroRepo::getInfo($id);
+
+        return json_encode($response);
+    }
+
     public function editEmployed(){
         if(Request::ajax()){
             $response = EmpleadoManager::update();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud",
+                'abortEdit' => true
+            );
+        }
+        return $response;
+    }
+
+    public function editCenter(){
+        if(Request::ajax()){
+            $response = CentroManager::update();
         }
         else{
             $response = array(

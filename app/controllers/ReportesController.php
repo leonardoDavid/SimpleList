@@ -110,7 +110,7 @@ class ReportesController extends BaseController {
             $values['range'] = Util::getRangeDate($values['range']);
             $values['model'] = 'adelanto';
             $rules = $this->getRulesValidator($values);
-
+            
             $validations = Validator::make(
                 $rules['columns'],$rules['rules']
             );
@@ -247,6 +247,39 @@ class ReportesController extends BaseController {
         return json_encode($response);
     }
 
+    public function generateCSVReportAllCargos(){
+        if(Request::ajax()){
+            $dataReport = ReporteRepo::allCargos();
+            $filters = array(
+                'model' => 'cargo'
+            );
+
+            $report = $this->generateFileCSV($dataReport,$filters);
+            if ($report['status']) {
+                $response = array(
+                    'status' => true,
+                    'download' => $report['routeDownload']
+                );
+            }
+            else{
+                $response = array(
+                    'status' => false,
+                    'motivo' => $report['motivo'],
+                    'mensajes' => "",
+                    'ex' => $report['exception']
+                );
+            }
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => 'Error en el tipo de solicitud de datos'
+            );
+        }
+
+        return json_encode($response);
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Funciones Privadas
@@ -296,10 +329,10 @@ class ReportesController extends BaseController {
             $filters['center'] = $values['centro'];
         }        
         if(array_key_exists('empleado', $values) && !empty($values['empleado']) && $values['empleado'] != 0 ){
-            $filters['employ'] = $empleadoRUT;
+            $filters['employ'] = $values['empleado'];
         }
         if(array_key_exists('jefatura', $values) && !empty($values['jefatura']) && $values['jefatura'] != 0 ){
-            $filters['boss'] = $jefaturaRUT;
+            $filters['boss'] = $values['jefatura'];
         }
         if(array_key_exists('range', $values) && !empty($values['range']) ){
             $tmp = explode('/',$values['range']['init']);
@@ -351,6 +384,14 @@ class ReportesController extends BaseController {
         }
         if(count($model) > 0 && $filters['model'] == "centro_costo"){
             array_push($headersCSV, 'Nombre');
+            array_push($headersCSV, 'Estado');
+            array_push($headersCSV, 'Creado en el Sistema');
+            array_push($headersCSV, 'Ultima Actualizacion');
+        }
+
+        if(count($model) > 0 && $filters['model'] == "cargo"){
+            array_push($headersCSV, 'Nombre');
+            array_push($headersCSV, 'Valor Dia');
             array_push($headersCSV, 'Estado');
             array_push($headersCSV, 'Creado en el Sistema');
             array_push($headersCSV, 'Ultima Actualizacion');
@@ -411,6 +452,14 @@ class ReportesController extends BaseController {
                         array_push($tmp, $row->creado);
                         array_push($tmp, $row->actualizado);
                     }
+                    if(count($model) > 0 && $filters['model'] == "cargo"){
+                        array_push($tmp, $row->nombre);
+                        array_push($tmp, $row->valor_dia);
+                        $estado = ($row->estado == 1) ? 'Habilitado' : 'Deshabilitado';
+                        array_push($tmp, $estado);
+                        array_push($tmp, $row->creado);
+                        array_push($tmp, $row->actualizado);
+                    }
 
                     if(array_key_exists('center', $filters))
                         array_push($tmp, $row->centro_costo);
@@ -434,6 +483,10 @@ class ReportesController extends BaseController {
 
                     case 'centro_costo':
                         $route = 'admin/centros';
+                        break;
+
+                    case 'cargo':
+                        $route = 'admin/cargos';
                         break;
                     
                     default:

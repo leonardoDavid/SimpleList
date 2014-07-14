@@ -1,18 +1,18 @@
 <?php namespace SimpleList\Managers;
 
-use SimpleList\Entities\CentroCosto;
+use SimpleList\Entities\Cargo;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Input;
 
-class CentroManager{
+class CargoManager{
 	
 	/*
     |--------------------------------------------------------------------------
-    | Manager de Centro de Costo
+    | Manager de Cargo
     |--------------------------------------------------------------------------
     |
     | Estas funciones son ituliozadas para agregar registros, actualizar o 
-    | deshabilitar centros de costo dentro del sistema
+    | deshabilitar cargos dentro del sistema
     |
     */
     public static function save($update = false){
@@ -24,16 +24,18 @@ class CentroManager{
         }
 
         $values = array(
-            'name' => $name
+            'name' => $name,
+            'valor' => Input::get('valor')
         );
 
         $rules = array(
-            'name' => 'required|unique:centro_costo,nombre'
+            'name' => 'required|unique:cargo,nombre',
+            'valor' => 'required|numeric|min:1'
         );
 
         if($update){
             $values['id'] = $id;
-            $rules['id'] = 'required|exists:centro_costo,id';
+            $rules['id'] = 'required|exists:cargo,id';
             unset($values['name']);
             unset($rules['name']);
         }
@@ -57,15 +59,16 @@ class CentroManager{
         }
         else{
             if($update){
-                $center = CentroCosto::find($id);
+                $cargo = Cargo::find($id);
             }
             else{
-                $center = new CentroCosto;
-                $center->active = 1;                
+                $cargo = new Cargo;
+                $cargo->active = 1;                
             }
-            $center->nombre = $name;
+            $cargo->nombre = $name;
+            $cargo->valor_dia = Input::get('valor');
             try {
-                $center->save();
+                $cargo->save();
                 $response = array(
                     'status' => true
                 );
@@ -85,14 +88,14 @@ class CentroManager{
     public static function enabled($disabled=null){
         $ids = explode(",", Input::get('ids'));
         $pased = true;
-        $centersEnabled = array();
-        foreach ($ids as $center){
+        $cargoEnabled = array();
+        foreach ($ids as $cargo){
             $validation = Validator::make(
                 array(
-                    'id' => $center
+                    'id' => $cargo
                 ),
                 array(
-                    'id' => 'required|exists:centro_costo,id'
+                    'id' => 'required|exists:cargo,id'
                 )
             );
 
@@ -101,16 +104,16 @@ class CentroManager{
                 break;
             }
             else{
-                array_push($centersEnabled, $center);
+                array_push($cargoEnabled, $cargo);
             }
         }
 
         if($pased){
-            foreach ($centersEnabled as $id){
-                $center = CentroCosto::find($id);
-                $center->active = (is_null($disabled)) ? 1 : 0;
+            foreach ($cargoEnabled as $id){
+                $cargo = CargoManager::find($id);
+                $cargo->active = (is_null($disabled)) ? 1 : 0;
                 try {
-                    $center->save();
+                    $cargo->save();
                     $status = true;
                 }catch (Exception $e) {
                     $status = false;
@@ -138,11 +141,11 @@ class CentroManager{
     }
 
     public static function disabled(){
-        return CentroManager::enabled(1);
+        return CargoManager::enabled(1);
     }
 
     public static function update(){
-        return CentroManager::save(true);
+        return CargoManager::save(true);
     }
 
 }
