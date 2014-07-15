@@ -52,6 +52,10 @@ Route::group(array('before' => 'auth'), function(){
 	Route::post('/admin/cargos/add','AdminController@addCargo');
 	Route::post('/admin/cargos/export','ReportesController@generateCSVReportAllCargos');
 	Route::post('/admin/cargos/refresh','AdminController@refreshCargo');
+	Route::post('/admin/cargos/enabled','AdminController@enabledCargo');
+	Route::post('/admin/cargos/disabled','AdminController@disabledCargo');
+	Route::post('/admin/cargos/info', 'AdminController@getInfoCargo');
+	Route::post('/admin/cargos/edit','AdminController@editCargo');
 
 	//Asistencia
 	Route::get('/asistencia',function(){

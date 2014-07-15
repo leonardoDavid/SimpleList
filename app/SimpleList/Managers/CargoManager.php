@@ -110,7 +110,7 @@ class CargoManager{
 
         if($pased){
             foreach ($cargoEnabled as $id){
-                $cargo = CargoManager::find($id);
+                $cargo = Cargo::find($id);
                 $cargo->active = (is_null($disabled)) ? 1 : 0;
                 try {
                     $cargo->save();
@@ -133,7 +133,7 @@ class CargoManager{
         else{
             $response = array(
                 'status' => false,
-                'motivo' => "Hay usuarios no registrados en el sistema, imposible actualizar"
+                'motivo' => "Hay cargos no registrados en el sistema, imposible actualizar"
             );            
         }
 

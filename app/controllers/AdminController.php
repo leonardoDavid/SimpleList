@@ -206,6 +206,32 @@ class AdminController extends BaseController {
         return $response;
     }
 
+    public function enabledCargo(){
+        if(Request::ajax()){
+            $response = CargoManager::enabled();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
+    public function disabledCargo(){
+        if(Request::ajax()){
+            $response = CargoManager::disabled();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud"
+            );
+        }
+        return $response;
+    }
+
     public function getInfoEmploy($id = null){
         if(is_null($id))
             $response = EmpleadoRepo::getInfo(Input::get('ids', null));
@@ -220,6 +246,15 @@ class AdminController extends BaseController {
             $response = CentroRepo::getInfo(Input::get('ids', null));
         else
             $response = CentroRepo::getInfo($id);
+
+        return json_encode($response);
+    }
+
+    public function getInfoCargo($id = null){
+        if(is_null($id))
+            $response = CargoRepo::getInfo(Input::get('ids', null));
+        else
+            $response = CargoRepo::getInfo($id);
 
         return json_encode($response);
     }
@@ -241,6 +276,20 @@ class AdminController extends BaseController {
     public function editCenter(){
         if(Request::ajax()){
             $response = CentroManager::update();
+        }
+        else{
+            $response = array(
+                'status' => false,
+                'motivo' => "Error en la solicitud",
+                'abortEdit' => true
+            );
+        }
+        return $response;
+    }
+
+    public function editCargo(){
+        if(Request::ajax()){
+            $response = CargoManager::update();
         }
         else{
             $response = array(

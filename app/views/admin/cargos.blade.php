@@ -86,7 +86,7 @@
                     <h3 class="box-title">Gestionar Cargos</h3>
                 </div>
                 <div class="box-body">
-					<table id="centersTable" class="table table-bordered table-striped">
+					<table id="cargosTable" class="table table-bordered table-striped">
                         <thead>
                             <tr>
                                 <th>Nombre</th>
@@ -168,7 +168,7 @@
         </div>
     </div>
 
-    <div class="modal fade" id="editCenterModal" data-backdrop="static">
+    <div class="modal fade" id="editCargoModal" data-backdrop="static">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -177,16 +177,18 @@
                 <div class="modal-body" id="editForm">
                     <p>Edición de Cargos, recuerde rellenar todo los campos obligatorios</p>
                     <input type="hidden" id="idCargoEdit">
-                    <div class="col-xs-12 col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="fa fa-barcode"></span></span>
-                            <input type="text" class="form-control" data-requiered="1" id="nameEdit" placeholder="Nombre">
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-barcode"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="nameEdit" placeholder="Nombre">
+                            </div>
                         </div>
-                    </div>
-                    <div class="col-xs-12 col-md-6">
-                        <div class="input-group">
-                            <span class="input-group-addon"><span class="fa fa-dollar"></span></span>
-                            <input type="text" class="form-control" data-requiered="1" id="valorEdit" placeholder="Valor Diario">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-dollar"></span></span>
+                                <input type="text" class="form-control" data-requiered="1" id="valorEdit" placeholder="Valor Diario">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -202,7 +204,7 @@
 @stop
 
 @section('scriptsInLine')
-    var tableDataCenters;
+    var tableDataCargos;
     var cargos;
     var contEdits;
 
@@ -214,7 +216,7 @@
         });
         trackSelected();
         $('*[data-autohide="1"]').hide();
-        tableDataCenters = $("#centersTable").DataTable({
+        tableDataCargos = $("#cargosTable").DataTable({
             "oLanguage": {
                 "sEmptyTable": "Sin Datos",
                 "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
@@ -254,23 +256,23 @@
         refreshTable();
     });
 
-    $('#disbledCenter').click(function(event) {
+    $('#disbledCargo').click(function(event) {
         $('#btn-enabled').hide();
         $('#btn-disabled').show();
-        $('#confirm-text').text("¿Realmente desea deshabilitar a los Centros de Costos seleccionados?");
+        $('#confirm-text').text("¿Realmente desea deshabilitar a los Cargos seleccionados?");
         $('#confirm').modal();
     });
 
-    $('#enabledCenter').click(function(event) {
+    $('#enabledCargo').click(function(event) {
         $('#btn-enabled').show();
         $('#btn-disabled').hide();
-        $('#confirm-text').text("¿Realmente desea habilitar a los Centros de Costos seleccionados?");
+        $('#confirm-text').text("¿Realmente desea habilitar a los Cargos seleccionados?");
         $('#confirm').modal();
     });
 
     $('#btn-enabled').click(function(event){
         $.ajax({
-            url: '/admin/centros/enabled',
+            url: '/admin/cargos/enabled',
             type: 'post',
             data: { 'ids': values.toString() },
             beforeSend:function(){
@@ -297,7 +299,7 @@
 
     $('#btn-disabled').click(function(event){
         $.ajax({
-            url: '/admin/centros/disabled',
+            url: '/admin/cargos/disabled',
             type: 'post',
             data: { 'ids': values.toString() },
             beforeSend:function(){
@@ -398,25 +400,26 @@
         if(validateEdit()){
             $('#btn-next-edit , #btn-final-edit').attr('disabled',true);
             $.ajax({
-                url: '/admin/centros/edit',
+                url: '/admin/cargos/edit',
                 type: 'post',
                 data: { 
                     name : $('#nameEdit').val(),
-                    id : $('#idCenterEdit').val()
+                    valor : $('#valorEdit').val(),
+                    id : $('#idCargoEdit').val()
                 },
                 success : function(response){
                     if(response['status']){
                         //Pasar al Siguiente
                         contEdits++;
                         $('#editFrom').text(contEdits);
-                        if(contEdits == centros.length){
+                        if(contEdits == cargos.length){
                             $('#btn-next-edit').hide();
                             $('#btn-final-edit').attr('disabled',false);
                             $('#statusEdit').hide();
                             $('#statusFinal').show();
                         }
                         else{
-                            loadTableEdit(centros[contEdits]);
+                            loadTableEdit(cargos[contEdits]);
                             $('#btn-next-edit , #btn-final-edit').attr('disabled',false);
                         }
                     }
@@ -425,28 +428,28 @@
                         $('#msj-error').text(response['motivo']);
                         $('#list-error').html(response['errores']);
                         if(response['abortEdit'])
-                            $('#editCenterModal').modal('hide');
+                            $('#editCargoModal').modal('hide');
                         $('#error-server').modal();                        
                     }
                 },
                 error : function(xhr){
                     $('#btn-next-edit , #btn-final-edit').attr('disabled',false);
-                    $('#msj-error').text("Existe un error de conexión, la edición de centros de costo se ha abortado.");
-                    $('#editCenterModal').modal('hide');
+                    $('#msj-error').text("Existe un error de conexión, la edición de cargos se ha abortado.");
+                    $('#editCargoModal').modal('hide');
                     $('#error-server').modal();
                 }
             });         
         }
     });
 
-    $('#editCenter').click(function(){
+    $('#editCargo').click(function(){
         if(values.length > 0){
             $.ajax({
-                url: '/admin/centros/info',
+                url: '/admin/cargos/info',
                 type: 'post',
                 data: { 'ids': values.toString() },
                 beforeSend : function(){
-                    $('#editCenter').attr('disabled', true);
+                    $('#editCargo').attr('disabled', true);
                     $('#btn-next-edit,#btn-final-edit').attr('disabled',false).show();
                     $('#statusEdit').show();
                     $('#statusFinal').hide();
@@ -455,21 +458,21 @@
                 success : function(response){
                     response = JSON.parse(response);
                     if(response['status']){
-                        centros = response['centers'];
-                        $('#editTo').text(centros.length);
-                        $('#editCenter').attr('disabled', false);
-                        loadTableEdit(centros[0]);
+                        cargos = response['cargos'];
+                        $('#editTo').text(cargos.length);
+                        $('#editCargo').attr('disabled', false);
+                        loadTableEdit(cargos[0]);
                         contEdits = 0;
-                        $('#editCenterModal').modal();
+                        $('#editCargoModal').modal();
                     }
                     else{
-                        $('#editCenter').attr('disabled', false);
+                        $('#editCargo').attr('disabled', false);
                         $('#msj-error').text(response['motivo']);
                         $('#error-server').modal();
                     }
                 },
                 error : function(xhr){
-                    $('#editCenter').attr('disabled', false);
+                    $('#editCargo').attr('disabled', false);
                     $('#msj-error').text('Error de conexión, intentelo más tarde');
                     $('#error-server').modal();
                 }
@@ -483,16 +486,24 @@
 
     function loadTableEdit(centro){
         $('#nameEdit').val(centro.nombre);
-        $('#idCenterEdit').val(centro.id);
+        $('#valorEdit').val(centro.valor);
+        $('#idCargoEdit').val(centro.id);
     }
 
     function validateEdit(){
-        if($('#nameEdit').val().trim() != "")
-            return true;
-        else{
+        var hasError = true;
+
+        if(!$('#nameEdit').val().trim() != ""){
             $('#nameEdit').parent().addClass('has-error');
-            return false;
+            hasError = false;
         }
+
+        if(isNaN($('#valorEdit').val()) || $('#valorEdit').val() == "" ){
+            $('#valorEdit').parent().addClass('has-error');
+            hasError = false;
+        }
+
+        return hasError;
     }
 
     function trackSelected(){
@@ -511,7 +522,7 @@
     }
 
     function refreshTable(){
-        tableDataCenters._fnClearTable();
+        tableDataCargos._fnClearTable();
         $.ajax({
             url: '/admin/cargos/refresh',
             type: 'post',
@@ -526,8 +537,8 @@
                     tmp.push(response[index]['active']);
                     tmp.push(response[index]['added']['date']);
                     tmp.push(response[index]['checkbox']);
-                    tableDataCenters._fnAddData(tmp);
-                    tableDataCenters._fnReDraw();
+                    tableDataCargos._fnAddData(tmp);
+                    tableDataCargos._fnReDraw();
                 });
                 $('#over-cargo').fadeOut();
                 trackSelected();
@@ -538,7 +549,7 @@
                 $('#error-server').modal();
             }
         });    
-        tableDataCenters._fnReDraw();       
+        tableDataCargos._fnReDraw();       
     }
 
     function clearFormAdd(){

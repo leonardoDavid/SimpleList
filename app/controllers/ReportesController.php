@@ -170,6 +170,7 @@ class ReportesController extends BaseController {
             $partes = explode('.', $fileLocation);
             $total = count($partes);
             $ext = ($total > 0) ? $partes[$total -1] : 'txt';
+            $ext = ($ext == 'csv') ? 'txt' : $ext;
 
             $headers = array(
                 'Content-Type' => $type,
