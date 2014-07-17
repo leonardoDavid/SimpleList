@@ -370,6 +370,8 @@ class ReportesController extends BaseController {
             array_push($headersCSV, 'Fecha de Lista');
         }
         if(count($model) > 0 && $filters['model'] == "empleado"){
+            array_push($headersCSV, 'Sueldo Base');
+            array_push($headersCSV, 'Cargas Familiares');
             array_push($headersCSV, 'Direccion');
             array_push($headersCSV, 'Fono Fijo');
             array_push($headersCSV, 'Fono Movil');
@@ -432,6 +434,8 @@ class ReportesController extends BaseController {
                         array_push($tmp, $row->dado);
                     }
                     if(count($model) > 0 && $filters['model'] == "empleado"){
+                        array_push($tmp, $row->sueldo);
+                        array_push($tmp, $row->cargas);
                         array_push($tmp, $row->direccion);
                         array_push($tmp, $row->fijo);
                         array_push($tmp, $row->movil);

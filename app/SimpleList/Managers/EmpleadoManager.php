@@ -29,6 +29,8 @@ class EmpleadoManager{
             'movil' => Input::get('movil'),
             'prevision' => Input::get('prevision'),
             'cargo' => Input::get('cargo'),
+            'cargas' => Input::get('cargas'),
+            'sueldo' => Input::get('sueldo'),
             'centro' => Input::get('centro'),
             'afp' => Input::get('afp'),
             'fecha_contrato' => Input::get('fechaIngreso'),
@@ -46,6 +48,8 @@ class EmpleadoManager{
             'prevision' => 'required',
             'cargo' => 'required|numeric',
             'centro' => 'required|numeric',
+            'sueldo' => 'required|numeric',
+            'cargas' => 'required|numeric',
             'afp' => 'required',
             'fecha_contrato' => 'required|regex:/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/|fecha',
             'fecha_termino' => 'required_if:tipo_contrato,1|required_if:tipo_contrato,2|regex:/[0-9]{2}\/[0-9]{2}\/[0-9]{4}/|fecha',
@@ -90,6 +94,8 @@ class EmpleadoManager{
             $empleado->prevision = strtoupper(Input::get('prevision'));
             $empleado->cargo = Input::get('cargo');
             $empleado->centro_costo = Input::get('centro');
+            $empleado->sueldo_base = Input::get('sueldo');
+            $empleado->carga_familiar = Input::get('cargas');
             $empleado->afp = strtoupper(Input::get('afp'));
             $empleado->tipo_contrato = Util::selectTipoContrato(Input::get('tipo'));
             $empleado->ingreso_contrato = Util::toDate(Input::get('fechaIngreso'));

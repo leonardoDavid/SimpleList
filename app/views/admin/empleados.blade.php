@@ -112,6 +112,20 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-dollar"></span></span>
+                                    <input type="text" class="form-control" id="sueldo" placeholder="Sueldo Base" data-requiered="1">
+                                </div>
+                            </div>
+                            <div class="col-xs-12 col-md-6">
+                                <div class="input-group">
+                                    <span class="input-group-addon"><span class="fa fa-group"></span></span>
+                                    <input type="text" class="form-control" id="cargas" placeholder="Cargas Familiares" data-requiered="1">
+                                </div>
+                            </div>
+                        </div>
                         <div class="input-group">
                             <span class="input-group-addon"><span class="fa fa-location-arrow"></span></span>
                             <input type="text" class="form-control" data-requiered="1" id="direction" placeholder="Dirección">
@@ -322,6 +336,20 @@
                             </div>
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-dollar"></span></span>
+                                <input type="text" class="form-control" id="sueldoEdit" placeholder="Sueldo Base" data-requiered="1">
+                            </div>
+                        </div>
+                        <div class="col-xs-12 col-md-6">
+                            <div class="input-group">
+                                <span class="input-group-addon"><span class="fa fa-group"></span></span>
+                                <input type="text" class="form-control" id="cargasEdit" placeholder="Cargas Familiares" data-requiered="1">
+                            </div>
+                        </div>
+                    </div>
                     <div class="input-group">
                         <span class="input-group-addon"><span class="fa fa-location-arrow"></span></span>
                         <input type="text" class="form-control" data-requiered="1" id="directionEdit" placeholder="Dirección">
@@ -466,7 +494,9 @@
                     fechaSalida : $('#fecha-salida').val(),
                     tipo : $('#tipo').val(),
     				cargo : $('#cargo').val(),
-    				centro : $('#centro').val()
+                    centro : $('#centro').val(),
+                    sueldo : $('#sueldo').val(),
+    				cargas : $('#cargas').val()
     			},
     			success : function(response){
     				if(response['status']){
@@ -516,7 +546,9 @@
                     fechaSalida : $('#fecha-salidaEdit').val(),
                     tipo : $('#tipoEdit').val(),
                     cargo : $('#cargoEdit').val(),
-                    centro : $('#centroEdit').val()
+                    centro : $('#centroEdit').val(),
+                    sueldo : $('#sueldoEdit').val(),
+                    cargas : $('#cargasEdit').val()
                 },
                 success : function(response){
                     if(response['status']){
@@ -625,7 +657,7 @@
         });
     });
 
-    $('#phone,#movil').keypress(function(event){
+    $('#phone,#movil,#phoneEdit,#movilEdit,#sueldo,#cargas,#sueldoEdit,#cargasEdit').keypress(function(event){
         if(event.which != 8 && isNaN(String.fromCharCode(event.which))){
             event.preventDefault();
         }
@@ -739,6 +771,8 @@
         $('#directionEdit').val(empleado.direccion);
         $('#phoneEdit').val(empleado.fonoFijo);
         $('#movilEdit').val(empleado.fonoMovil);
+        $('#sueldoEdit').val(empleado.sueldo);
+        $('#cargasEdit').val(empleado.cargas);
         $('#previsionEdit').val(empleado.prevision);
         $('#afpEdit').val(empleado.afp);
         $('#fecha-ingresoEdit').val(empleado.inicioContrato);
@@ -820,6 +854,14 @@
     		$('#movil').parent().addClass('has-error');
     		hasError = false;
     	}
+        if(isNaN($('#sueldo').val())){
+            $('#sueldo').parent().addClass('has-error');
+            hasError = false;
+        }
+        if(isNaN($('#cargas').val())){
+            $('#cargas').parent().addClass('has-error');
+            hasError = false;
+        }
 
     	return hasError;
     }
@@ -843,6 +885,14 @@
             $('#movilEdit').parent().addClass('has-error');
             hasError = false;
         }
+        if(isNaN($('#sueldoEdit').val())){
+            $('#sueldoEdit').parent().addClass('has-error');
+            hasError = false;
+        }
+        if(isNaN($('#cargasEdit').val())){
+            $('#cargasEdit').parent().addClass('has-error');
+            hasError = false;
+        }
 
         return hasError;
     }
@@ -854,7 +904,9 @@
     	$('#ape_materno').val("");
     	$('#direction').val("");
     	$('#phone').val("");
-    	$('#movil').val("");
+        $('#movil').val("");
+        $('#sueldo').val("");
+    	$('#cargas').val("");
         $('#prevision').val("");
         $('#afp').val("");
         $('#fecha-ingreso').val("");

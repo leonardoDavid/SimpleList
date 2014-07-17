@@ -163,6 +163,8 @@ class EmpleadoRepo{
                             'inicioContrato' => $inicio[2]."/".$inicio[1]."/".$inicio[0],                        
                             'finContrato' => $fin[2]."/".$fin[1]."/".$fin[0],
                             'cargo' => $empleado->cargo,
+                            'sueldo' => $empleado->sueldo_base,
+                            'cargas' => $empleado->carga_familiar,
                             'centroCosto' => $empleado->centro_costo,
                             'estado' => $empleado->active
                         );
@@ -230,6 +232,8 @@ class EmpleadoRepo{
                         'inicioContrato' => $inicio[2]."/".$inicio[1]."/".$inicio[0],                        
                         'finContrato' => $fin[2]."/".$fin[1]."/".$fin[0],
                         'cargo' => $empleado->cargo,
+                        'suledo' => $empleado->sueldo_base,
+                        'cargas' => $empleado->carga_familiar,
                         'centroCosto' => $empleado->centro_costo,
                         'estado' => $empleado->active
                     );

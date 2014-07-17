@@ -93,8 +93,8 @@ class ReporteRepo{
 
     public static function allEmployes(){
         //Datos del Epleado
-        $query = Empleado::select('empleado.nombre as nombre_empleado','empleado.ape_paterno','empleado.ape_materno','empleado.id as rut_empleado',
-                                'empleado.direccion as direccion','empleado.fono_fijo as fijo','fono_movil as movil','empleado.afp as afp',
+        $query = Empleado::select('empleado.nombre as nombre_empleado','empleado.ape_paterno','empleado.ape_materno','empleado.id as rut_empleado','empleado.carga_familiar as cargas',
+                                'empleado.direccion as direccion','empleado.fono_fijo as fijo','fono_movil as movil','empleado.afp as afp','empleado.sueldo_base as sueldo',
                                 'empleado.prevision as prevision','empleado.tipo_contrato as tipo_contrato','empleado.ingreso_contrato as inicio_contrato',
                                 'empleado.vencimiento_contrato as fin_contrato','empleado.active as estado',
                                 'empleado.created_at as creado','empleado.updated_at as actualizado');

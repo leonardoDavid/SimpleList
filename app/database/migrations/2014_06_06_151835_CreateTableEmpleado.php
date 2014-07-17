@@ -17,6 +17,8 @@ class CreateTableEmpleado extends Migration {
 			$tabla->text('direccion');
 			$tabla->integer('fono_fijo')->nullable()->unsigned();
 			$tabla->integer('fono_movil')->unsigned();
+			$tabla->integer('sueldo_base')->unsigned();
+			$tabla->integer('carga_familiar')->unsigned();
 			$tabla->string('prevision');
 			$tabla->string('afp');
 			$tabla->string('img_perfil');
