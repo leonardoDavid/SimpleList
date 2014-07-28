@@ -36,7 +36,9 @@ class EmpleadoRepo{
             $employes = Empleado::where('empleado.id','!=',Auth::user()->id_empleado)
                         ->join('asistencia','id_empleado','=','empleado.id')
                         ->where('empleado.centro_costo','=',$idCenter)
+                        ->where('empleado.active','=','1')
                         ->where(DB::raw('DATE(asistencia.created_at)'),'=',$tmp)
+                        ->orderBy('empleado.ape_paterno','asc')
                         ->select("empleado.ape_paterno as paterno","empleado.ape_materno as materno","empleado.nombre as firstname","empleado.id as rut",'empleado.active as status','asistencia.comentario as comentario','asistencia.active as presencia')
                         ->get();
             $route = "update";
@@ -44,6 +46,8 @@ class EmpleadoRepo{
         else{
             $employes = Empleado::where('id','!=',Auth::user()->id_empleado)
                         ->where('centro_costo','=',$idCenter)
+                        ->where('empleado.active','=','1')
+                        ->orderBy('empleado.ape_paterno','asc')
                         ->select("empleado.ape_paterno as paterno","empleado.ape_materno as materno","empleado.nombre as firstname","empleado.id as rut",'empleado.active as status')
                         ->get();
             $route = "save";
@@ -93,7 +97,7 @@ class EmpleadoRepo{
 
     public static function getSelectEmployes($id=null){
         $options = "<option value='0'>Seleccione un Empleado</option>";
-        $empleoyes = Empleado::where('active','=','1')->get();
+        $empleoyes = Empleado::where('active','=','1')->orderBy('ape_paterno','asc')->get();
         foreach ($empleoyes as $row){
             $selected = ($row->id == $id) ? "selected" : "";
             $options .= "<option value='".$row->id."' ".$selected.">".ucwords($row->nombre)." ".ucwords($row->ape_paterno)."</option>";

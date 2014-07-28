@@ -309,8 +309,8 @@ class ReportesController extends BaseController {
         if(array_key_exists('range', $values) && !empty($values['range']) ){
             $columns['initDate'] = $values['range']['init'];
             $columns['lastDate'] = $values['range']['last'];
-            $rules['initDate'] = 'after_init_date:'.$values['model'];
-            $rules['lastDate'] = 'before_last_date:'.$values['model'];
+            $rules['initDate'] = 'fecha:'.$values['range']['init'];
+            $rules['lastDate'] = 'fecha:'.$values['range']['last'];
         }
         if(array_key_exists('ifComments', $values)){
             $columns['hasComments'] = $values['ifComments'];
@@ -368,6 +368,7 @@ class ReportesController extends BaseController {
         if(count($model) > 0 && $filters['model'] == "asistencia"){
             array_push($headersCSV, 'Presente');
             array_push($headersCSV, 'Fecha de Lista');
+            array_push($headersCSV, 'Hora de Lista');
         }
         if(count($model) > 0 && $filters['model'] == "empleado"){
             array_push($headersCSV, 'Sueldo Base');
@@ -427,7 +428,9 @@ class ReportesController extends BaseController {
                     }
                     if(count($model) > 0 && $filters['model'] == "asistencia"){
                         array_push($tmp, $row->asistio);
-                        array_push($tmp, $row->tomada);
+                        $date = explode(" ", $row->tomada);
+                        array_push($tmp, $date[0]);
+                        array_push($tmp, $date[1]);
                     }
                     if(count($model) > 0 && $filters['model'] == "adelanto"){
                         array_push($tmp, $row->monto);

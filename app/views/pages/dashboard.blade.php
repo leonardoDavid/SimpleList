@@ -26,7 +26,7 @@
 
 @section('contend')
 	<div class="row">
-	    <div class="col-lg-3 col-xs-6">
+	    <a href="/adelantos" class="col-lg-3 col-xs-6">
 	        <div class="small-box bg-green">
 	            <div class="inner">
 	                <h3>
@@ -39,12 +39,12 @@
 	            <div class="icon">
 	                <i class="fa fa-money"></i>
 	            </div>
-	            <a href="/adelantos" class="small-box-footer">
+	            <div class="small-box-footer">
 	                Más info <i class="fa fa-arrow-circle-right"></i>
-	            </a>
+	            </div>
 	        </div>
-	    </div>
-	    <div class="col-lg-3 col-xs-6">
+	    </a>
+	    <a href="/asistencia" class="col-lg-3 col-xs-6">
 	        <div class="small-box bg-teal">
 	            <div class="inner">
 	                <h3>
@@ -57,12 +57,12 @@
 	            <div class="icon">
 	                <i class="fa fa-calendar"></i>
 	            </div>
-	            <a href="/asistencia" class="small-box-footer">
+	            <div class="small-box-footer">
 	                Más info <i class="fa fa-arrow-circle-right"></i>
-	            </a>
+	            </div>
 	        </div>
-	    </div>
-	    <div class="col-lg-3 col-xs-6">
+	    </a>
+	    <a href="/admin/empleados" class="col-lg-3 col-xs-6">
 	        <div class="small-box bg-blue">
 	            <div class="inner">
 	                <h3>
@@ -75,12 +75,12 @@
 	            <div class="icon">
 	                <i class="fa fa-users"></i>
 	            </div>
-	            <a href="/admin/empleados" class="small-box-footer">
+	            <div class="small-box-footer">
 	                Más info <i class="fa fa-arrow-circle-right"></i>
-	            </a>
+	            </div>
 	        </div>
-	    </div>
-	    <div class="col-lg-3 col-xs-6">
+	    </a>
+	    <a href="/admin/centros" class="col-lg-3 col-xs-6">
 	        <div class="small-box bg-yellow">
 	            <div class="inner">
 	                <h3>
@@ -93,11 +93,11 @@
 	            <div class="icon">
 	                <i class="fa fa-archive"></i>
 	            </div>
-	            <a href="/admin/centros" class="small-box-footer">
+	            <div class="small-box-footer">
 	                Más info <i class="fa fa-arrow-circle-right"></i>
-	            </a>
+	            </div>
 	        </div>
-	    </div>
+	    </a>
 	</div>
 
 	<div class="row">
