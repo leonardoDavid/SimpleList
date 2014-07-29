@@ -4,3 +4,4 @@
 Thumbs.db
 *~
 app/config/database.php
+vendor/
