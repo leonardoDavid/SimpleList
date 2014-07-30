@@ -5,3 +5,10 @@ Thumbs.db
 *~
 app/config/database.php
 vendor/
+app/SimpleList/Files/Reports/*.csv
+app/SimpleList/Files/Reports/*.xls
+app/SimpleList/Files/Reports/*.xlsx
+app/SimpleList/Files/Images/*.jpg
+app/SimpleList/Files/Images/Profile/*.jpg
+app/SimpleList/Files/Images/*.png
+app/SimpleList/Files/Images/Profile/*.png
