@@ -60,13 +60,13 @@ class AsistenciaController extends BaseController {
             return AsistenciaRepo::updateList($fecha);
         }
         else{
-            return AsistenciaRepo::newList();
+            return ($fecha == date("d/m/Y")) ? AsistenciaRepo::newList() : AsistenciaRepo::newList('BugMula');
         }
     }
 
     public function saveAssistance(){
         if(Request::ajax()){
-            $response = AsistenciaManager::save();
+            $response = (Input::has('fecha')) ? AsistenciaManager::save(false,Input::get('fecha')) : AsistenciaManager::save();
         }
         else{
             $response = array(

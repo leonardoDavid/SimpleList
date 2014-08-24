@@ -4,6 +4,7 @@ use SimpleList\Entities\Empleado;
 use SimpleList\Libraries\Util;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
+use Illuminate\Support\Facades\Input;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -30,7 +31,7 @@ class EmpleadoRepo{
     }
 
     public static function getTableListEmployes($idCenter,$centro,$fecha = null){
-        if(!is_null($fecha)){
+        if(!is_null($fecha) && $fecha != "BugMula"){
             $tmp = explode("/", $fecha);
             $tmp = $tmp[2]."-".$tmp[1]."-".$tmp[0];
             $employes = Empleado::where('empleado.id','!=',Auth::user()->id_empleado)
@@ -86,11 +87,19 @@ class EmpleadoRepo{
         if($list == "")
             $list = "<tr><td colspan='5'>Sin Empleados Asociados</td></tr>";
 
+        if($fecha == "BugMula"){
+            $bug = true;
+            $fecha = Input::get('dateList', date("d/m/Y"));
+        } 
+        else
+            $bug = false;
+
         return View::make('asistencia.listEmployes',array(
                     'employes' => $list,
                     'centerName' => $centro,
                     'values' => $values,
                     'action' => $route,
+                    'BugMula' => $bug,
                     'fecha' => $fecha
                 ));
     }

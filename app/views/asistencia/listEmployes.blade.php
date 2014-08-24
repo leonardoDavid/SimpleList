@@ -60,7 +60,7 @@
 			type: 'post',
 			data: { 
                 'values' : getValues()
-                @if($action == "update")
+                @if($action == "update" || $BugMula)
                     ,'fecha' : '{{ $fecha }}'
                 @endif
             },

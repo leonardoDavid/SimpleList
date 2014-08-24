@@ -76,6 +76,9 @@ class AsistenciaManager{
                     $asistencia->id_empleado = $tmp[0];
                     $asistencia->active = $tmp[1];
                     $asistencia->comentario = $dataContend[1];
+                    if(!is_null($fecha)){
+                        $asistencia->created_at = $fecha." ".date("h:i:s");
+                    }
                 }
                 
                 try {
